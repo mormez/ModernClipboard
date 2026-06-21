@@ -406,6 +406,12 @@ private struct CopyrightModalView: View {
     @State private var copied = false
 
     private let licenseText = """
+Modern Clipboard, its code, design, and name are Copyright (c) 2026 Mor Mezrich / Myrrh Labs. All rights reserved. No part of Modern Clipboard may be used, copied, modified, or redistributed without prior written permission, except for the original Clipy components incorporated into it, which remain governed by the MIT License below.
+
+MODERN CLIPBOARD IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH MODERN CLIPBOARD OR THE USE OR OTHER DEALINGS IN MODERN CLIPBOARD.
+
+---
+
 The MIT License (MIT)
 Copyright (c) 2015-2018 Clipy Project
 
