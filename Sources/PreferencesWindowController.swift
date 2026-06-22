@@ -289,6 +289,48 @@ private struct PreferencesView: View {
         prefs.excludedBundleIDs.append(contentsOf: toAdd)
     }
 
+    private var appVersionString: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
+    }
+
+    private enum FeedbackKind {
+        case bug, feature
+
+        var subject: String {
+            switch self {
+            case .bug:     return "Modern Clipboard Bug Report"
+            case .feature: return "Modern Clipboard Feature Request"
+            }
+        }
+
+        var bodyPrompt: String {
+            switch self {
+            case .bug:     return "Please describe the bug and the steps to reproduce it:\n\n\n"
+            case .feature: return "Please describe the feature you'd like to see:\n\n\n"
+            }
+        }
+    }
+
+    private func sendFeedback(_ kind: FeedbackKind) {
+        let buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+        let body = """
+        \(kind.bodyPrompt)
+        ---
+        App version: \(appVersionString) (\(buildNumber))
+        macOS: \(ProcessInfo.processInfo.operatingSystemVersionString)
+        """
+
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = "modern.clipboard@gmail.com"
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: kind.subject),
+            URLQueryItem(name: "body", value: body),
+        ]
+        guard let url = components.url else { return }
+        NSWorkspace.shared.open(url)
+    }
+
     private func pickApp() {
         let panel = NSOpenPanel()
         panel.title = "Choose an app to exclude"
@@ -315,7 +357,7 @@ private struct PreferencesView: View {
                     .frame(width: 80, height: 80)
             }
             Text("Modern Clipboard").font(.largeTitle.bold())
-            Text("Version 1.0").foregroundStyle(.secondary)
+            Text("Version \(appVersionString)").foregroundStyle(.secondary)
             Text("A modern clipboard manager")
                 .multilineTextAlignment(.center)
                 .foregroundStyle(.secondary)
@@ -345,6 +387,16 @@ private struct PreferencesView: View {
                 UpdaterManager.shared.checkForUpdates()
             }
             .buttonStyle(.borderedProminent)
+            .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.green, lineWidth: 1.5))
+            .padding(.top, 4)
+
+            HStack(spacing: 10) {
+                Button("Report a Bug…") { sendFeedback(.bug) }
+                    .buttonStyle(.bordered)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.red, lineWidth: 1.5))
+                Button("Request a Feature…") { sendFeedback(.feature) }
+                    .buttonStyle(.bordered)
+            }
             .padding(.top, 4)
 
             Spacer()
