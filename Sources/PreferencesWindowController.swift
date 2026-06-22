@@ -293,7 +293,7 @@ private struct PreferencesView: View {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
     }
 
-    private enum FeedbackKind {
+    private enum FeedbackKind: Equatable {
         case bug, feature
 
         var subject: String {
@@ -305,7 +305,7 @@ private struct PreferencesView: View {
 
         var bodyPrompt: String {
             switch self {
-            case .bug:     return "Please describe the bug and the steps to reproduce it. If you can, use \"Export Diagnostics…\" in this About tab and attach the file:\n\n\n"
+            case .bug:     return "Please describe the bug and the steps to reproduce it. A diagnostics log is attached automatically when possible — if not, use \"Export Diagnostics…\" below and attach it manually:\n\n\n"
             case .feature: return "Please describe the feature you'd like to see:\n\n\n"
             }
         }
@@ -320,6 +320,20 @@ private struct PreferencesView: View {
         macOS: \(ProcessInfo.processInfo.operatingSystemVersionString)
         """
 
+        // For bug reports, try to attach the diagnostics log via Mail.app's share service.
+        // mailto: links can't carry attachments, so this is the only way to auto-attach.
+        if kind == .bug, let service = NSSharingService(named: .composeEmail) {
+            let logURL = AppLogger.fileURL
+            let items: [Any] = FileManager.default.fileExists(atPath: logURL.path) ? [body, logURL] : [body]
+            if service.canPerform(withItems: items) {
+                service.recipients = ["modern.clipboard@gmail.com"]
+                service.subject = kind.subject
+                service.perform(withItems: items)
+                return
+            }
+        }
+
+        // Fallback: mailto (works with any mail client, but never carries an attachment)
         var components = URLComponents()
         components.scheme = "mailto"
         components.path = "modern.clipboard@gmail.com"
