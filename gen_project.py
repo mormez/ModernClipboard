@@ -41,6 +41,7 @@ SOURCES = [
     "SnippetsEditorWindowController.swift",
     "Extensions.swift",
     "UpdaterManager.swift",
+    "AppLogger.swift",
 ]
 
 # resource files

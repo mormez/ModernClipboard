@@ -8,6 +8,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
 
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        AppLogger.shared.log("App launching — version \(version) (\(build)), macOS \(ProcessInfo.processInfo.operatingSystemVersionString)")
+        AppLogger.shared.log("Accessibility permission granted: \(AXIsProcessTrustedWithOptions(nil))")
+
         _ = Preferences.shared
         _ = ClipboardHistory.shared
         _ = SnippetManager.shared
@@ -34,6 +39,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        AppLogger.shared.log("App terminating")
         ClipboardMonitor.shared.stop()
         HotkeyManager.shared.unregisterAll()
     }

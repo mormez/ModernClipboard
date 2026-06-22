@@ -86,6 +86,9 @@ final class PasteService {
     }
 
     func triggerPaste() {
+        if !AXIsProcessTrustedWithOptions(nil) {
+            AppLogger.shared.log("Paste triggered WITHOUT Accessibility permission — paste will likely fail")
+        }
         let src = CGEventSource(stateID: .combinedSessionState)
         let down = CGEvent(keyboardEventSource: src, virtualKey: 0x09, keyDown: true)
         down?.flags = .maskCommand

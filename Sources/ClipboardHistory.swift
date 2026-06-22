@@ -51,13 +51,19 @@ final class ClipboardHistory {
     }
 
     private func save() {
-        guard let data = try? JSONEncoder().encode(items) else { return }
+        guard let data = try? JSONEncoder().encode(items) else {
+            AppLogger.shared.log("Failed to encode clipboard history (\(items.count) items)")
+            return
+        }
         UserDefaults.standard.set(data, forKey: storageKey)
     }
 
     private func load() {
-        guard let data = UserDefaults.standard.data(forKey: storageKey),
-              let loaded = try? JSONDecoder().decode([ClipItem].self, from: data) else { return }
+        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
+        guard let loaded = try? JSONDecoder().decode([ClipItem].self, from: data) else {
+            AppLogger.shared.log("Failed to decode saved clipboard history — starting with empty history")
+            return
+        }
         items = loaded
     }
 }

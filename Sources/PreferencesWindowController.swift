@@ -305,7 +305,7 @@ private struct PreferencesView: View {
 
         var bodyPrompt: String {
             switch self {
-            case .bug:     return "Please describe the bug and the steps to reproduce it:\n\n\n"
+            case .bug:     return "Please describe the bug and the steps to reproduce it. If you can, use \"Export Diagnostics…\" in this About tab and attach the file:\n\n\n"
             case .feature: return "Please describe the feature you'd like to see:\n\n\n"
             }
         }
@@ -398,6 +398,11 @@ private struct PreferencesView: View {
                     .buttonStyle(.bordered)
             }
             .padding(.top, 4)
+
+            ExportDiagnosticsButton()
+            Text("Attach this to a bug report to help us track down what went wrong.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             Spacer()
 
@@ -580,6 +585,74 @@ private struct DocDownloadButton: View {
 
         do {
             // Replace any existing file at the chosen location
+            if FileManager.default.fileExists(atPath: dest.path) {
+                try FileManager.default.removeItem(at: dest)
+            }
+            try FileManager.default.copyItem(at: src, to: dest)
+            flash(.success)
+        } catch {
+            flash(.failure)
+        }
+    }
+
+    private func flash(_ state: DownloadFeedback) {
+        feedback = state
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) { feedback = .idle }
+    }
+}
+
+// MARK: - Export diagnostics button
+
+private struct ExportDiagnosticsButton: View {
+    @State private var feedback: DownloadFeedback = .idle
+
+    enum DownloadFeedback { case idle, success, failure }
+
+    var body: some View {
+        Button {
+            export()
+        } label: {
+            HStack(spacing: 5) {
+                Image(systemName: feedbackIcon)
+                    .foregroundStyle(feedbackColor)
+                Text(feedback == .success ? "Saved" : "Export Diagnostics…")
+                    .lineLimit(1)
+            }
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.small)
+        .disabled(feedback != .idle)
+    }
+
+    private var feedbackIcon: String {
+        switch feedback {
+        case .idle:    return "doc.text.magnifyingglass"
+        case .success: return "checkmark.circle.fill"
+        case .failure: return "xmark.circle.fill"
+        }
+    }
+
+    private var feedbackColor: Color {
+        switch feedback {
+        case .idle:    return .primary
+        case .success: return .green
+        case .failure: return .red
+        }
+    }
+
+    private func export() {
+        let src = AppLogger.fileURL
+        guard FileManager.default.fileExists(atPath: src.path) else { flash(.failure); return }
+
+        let panel = NSSavePanel()
+        panel.nameFieldStringValue = "Modern Clipboard Diagnostics.log"
+        panel.allowedContentTypes = [.plainText]
+        panel.directoryURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
+
+        NSApp.activate(ignoringOtherApps: true)
+        guard panel.runModal() == .OK, let dest = panel.url else { return }
+
+        do {
             if FileManager.default.fileExists(atPath: dest.path) {
                 try FileManager.default.removeItem(at: dest)
             }

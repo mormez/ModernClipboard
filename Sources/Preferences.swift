@@ -164,6 +164,8 @@ final class Preferences: ObservableObject {
         do {
             if launchAtLogin { try SMAppService.mainApp.register() }
             else             { try SMAppService.mainApp.unregister() }
-        } catch {}
+        } catch {
+            AppLogger.shared.log("Failed to \(launchAtLogin ? "register" : "unregister") launch-at-login: \(error.localizedDescription)")
+        }
     }
 }

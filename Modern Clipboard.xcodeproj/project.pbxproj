@@ -24,9 +24,10 @@
 		A1B2C3D4E5F6020E00 /* SnippetsEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6010E00 /* SnippetsEditorWindowController.swift */; };
 		A1B2C3D4E5F6020F00 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6010F00 /* Extensions.swift */; };
 		A1B2C3D4E5F6021000 /* UpdaterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011000 /* UpdaterManager.swift */; };
-		A1B2C3D4E5F6021100 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011100 /* Assets.xcassets */; };
-		A1B2C3D4E5F6021200 /* Modern Clipboard Quick Start.docx in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011200 /* Modern Clipboard Quick Start.docx */; };
-		A1B2C3D4E5F6021300 /* Modern Clipboard User Manual.docx in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011300 /* Modern Clipboard User Manual.docx */; };
+		A1B2C3D4E5F6021100 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011100 /* AppLogger.swift */; };
+		A1B2C3D4E5F6021200 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011200 /* Assets.xcassets */; };
+		A1B2C3D4E5F6021300 /* Modern Clipboard Quick Start.docx in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011300 /* Modern Clipboard Quick Start.docx */; };
+		A1B2C3D4E5F6021400 /* Modern Clipboard User Manual.docx in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6011400 /* Modern Clipboard User Manual.docx */; };
 		A1B2C3D4E5F6040200 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = A1B2C3D4E5F6040100 /* Sparkle */; };
 /* End PBXBuildFile section */
 
@@ -48,9 +49,10 @@
 		A1B2C3D4E5F6010E00 /* SnippetsEditorWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnippetsEditorWindowController.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6010F00 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F6011000 /* UpdaterManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdaterManager.swift; sourceTree = "<group>"; };
-		A1B2C3D4E5F6011100 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A1B2C3D4E5F6011200 /* Modern Clipboard Quick Start.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Modern Clipboard Quick Start.docx"; sourceTree = "<group>"; };
-		A1B2C3D4E5F6011300 /* Modern Clipboard User Manual.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Modern Clipboard User Manual.docx"; sourceTree = "<group>"; };
+		A1B2C3D4E5F6011100 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6011200 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1B2C3D4E5F6011300 /* Modern Clipboard Quick Start.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Modern Clipboard Quick Start.docx"; sourceTree = "<group>"; };
+		A1B2C3D4E5F6011400 /* Modern Clipboard User Manual.docx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Modern Clipboard User Manual.docx"; sourceTree = "<group>"; };
 		A1B2C3D4E5F6030000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1B2C3D4E5F6030100 /* ModernClipboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ModernClipboard.entitlements; sourceTree = "<group>"; };
 		A1B2C3D4E5F6000300 /* Modern Clipboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Modern Clipboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,6 +101,7 @@
 				A1B2C3D4E5F6011100,
 				A1B2C3D4E5F6011200,
 				A1B2C3D4E5F6011300,
+				A1B2C3D4E5F6011400,
 				A1B2C3D4E5F6030000,
 				A1B2C3D4E5F6030100,
 			);
@@ -176,9 +179,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1B2C3D4E5F6021100 /* Assets.xcassets in Resources */,
-				A1B2C3D4E5F6021200 /* Modern Clipboard Quick Start.docx in Resources */,
-				A1B2C3D4E5F6021300 /* Modern Clipboard User Manual.docx in Resources */,
+				A1B2C3D4E5F6021200 /* Assets.xcassets in Resources */,
+				A1B2C3D4E5F6021300 /* Modern Clipboard Quick Start.docx in Resources */,
+				A1B2C3D4E5F6021400 /* Modern Clipboard User Manual.docx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,6 +209,7 @@
 				A1B2C3D4E5F6020E00 /* SnippetsEditorWindowController.swift in Sources */,
 				A1B2C3D4E5F6020F00 /* Extensions.swift in Sources */,
 				A1B2C3D4E5F6021000 /* UpdaterManager.swift in Sources */,
+				A1B2C3D4E5F6021100 /* AppLogger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -66,14 +66,20 @@ final class SnippetManager: ObservableObject {
     // MARK: - Persistence
 
     func persist() {
-        guard let data = try? JSONEncoder().encode(folders) else { return }
+        guard let data = try? JSONEncoder().encode(folders) else {
+            AppLogger.shared.log("Failed to encode snippet folders (\(folders.count) folders)")
+            return
+        }
         UserDefaults.standard.set(data, forKey: storageKey)
         NotificationCenter.default.post(name: .snippetsChanged, object: nil)
     }
 
     private func load() {
-        guard let data = UserDefaults.standard.data(forKey: storageKey),
-              let loaded = try? JSONDecoder().decode([SnippetFolder].self, from: data) else { return }
+        guard let data = UserDefaults.standard.data(forKey: storageKey) else { return }
+        guard let loaded = try? JSONDecoder().decode([SnippetFolder].self, from: data) else {
+            AppLogger.shared.log("Failed to decode saved snippets — starting with empty snippets")
+            return
+        }
         folders = loaded
     }
 

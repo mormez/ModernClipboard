@@ -50,6 +50,7 @@ final class ClipboardMonitor {
     private func captureClipboard(_ pb: NSPasteboard) {
         // 1. Image
         if let image = NSImage(pasteboard: pb), let data = image.tiffRepresentation {
+            AppLogger.shared.log("Captured image (\(data.count) bytes)")
             ClipboardHistory.shared.add(ClipItem(
                 id: UUID(), type: .image,
                 stringValue: nil, imageData: data, timestamp: Date()
@@ -59,6 +60,7 @@ final class ClipboardMonitor {
 
         // 2. File URL
         if let str = pb.string(forType: .fileURL), !str.isEmpty {
+            AppLogger.shared.log("Captured file URL")
             ClipboardHistory.shared.add(ClipItem(
                 id: UUID(), type: .fileURL,
                 stringValue: str, imageData: nil, timestamp: Date()
@@ -79,6 +81,7 @@ final class ClipboardMonitor {
                     richFormat = .html
                 }
             }
+            AppLogger.shared.log("Captured text (\(str.count) chars\(richFormat != nil ? ", with \(richFormat!) formatting" : ""))")
             ClipboardHistory.shared.add(ClipItem(
                 id: UUID(), type: .string,
                 stringValue: str, imageData: nil, timestamp: Date(),

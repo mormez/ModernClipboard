@@ -23,8 +23,12 @@ final class HotkeyManager {
         handlers[id] = handler
         let hkID = EventHotKeyID(signature: makeFourCC("MCPY"), id: id)
         var ref: EventHotKeyRef?
-        RegisterEventHotKey(keyCode, modifiers, hkID, GetEventDispatcherTarget(), 0, &ref)
-        if let ref { hotkeys[id] = ref }
+        let status = RegisterEventHotKey(keyCode, modifiers, hkID, GetEventDispatcherTarget(), 0, &ref)
+        if let ref {
+            hotkeys[id] = ref
+        } else {
+            AppLogger.shared.log("Hotkey registration FAILED — keyCode: \(keyCode), modifiers: \(modifiers), status: \(status)")
+        }
         return id
     }
 
