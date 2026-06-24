@@ -105,13 +105,13 @@ final class MenuBarManager: NSObject {
         updateItem.target = self
         menu.addItem(updateItem)
 
-        let prefs = NSMenuItem(title: "Preferences…", action: #selector(openPreferences), keyEquivalent: ",")
-        prefs.target = self
-        menu.addItem(prefs)
-
         let help = NSMenuItem(title: "Help & Feedback…", action: #selector(openHelp), keyEquivalent: "")
         help.target = self
         menu.addItem(help)
+
+        let prefs = NSMenuItem(title: "Preferences…", action: #selector(openPreferences), keyEquivalent: ",")
+        prefs.target = self
+        menu.addItem(prefs)
 
         menu.addItem(.separator())
 
