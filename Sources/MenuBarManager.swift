@@ -101,10 +101,6 @@ final class MenuBarManager: NSObject {
         }
 
         // --- Actions ---
-        let clear = NSMenuItem(title: "Clear History", action: #selector(clearHistory), keyEquivalent: "")
-        clear.target = self
-        menu.addItem(clear)
-
         let updateItem = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
         updateItem.target = self
         menu.addItem(updateItem)
@@ -179,17 +175,6 @@ final class MenuBarManager: NSObject {
             mi.image = img.scaled(to: NSSize(width: 24, height: 24))
         }
         return mi
-    }
-
-    @objc private func clearHistory() {
-        let alert = NSAlert()
-        alert.messageText = "Clear Clipboard History?"
-        alert.informativeText = "This will permanently delete all clipboard history. This action cannot be undone."
-        alert.alertStyle = .warning
-        alert.addButton(withTitle: "Clear History")
-        alert.addButton(withTitle: "Cancel")
-        guard alert.runModal() == .alertFirstButtonReturn else { return }
-        ClipboardHistory.shared.clear()
     }
 
     @objc private func openSnippetsEditor() {

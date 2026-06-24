@@ -39,6 +39,7 @@ private struct PreferencesView: View {
     @ObservedObject private var prefs = Preferences.shared
     @State private var selectedExcludedID: String? = nil   // used for row highlight only
     @State private var selectedTab: Tab = .general
+    @State private var showClearHistoryConfirm = false
 
     private enum Tab: Hashable { case general, exclude, help, about }
 
@@ -56,6 +57,12 @@ private struct PreferencesView: View {
         .frame(width: 580, height: 550)
         .onReceive(NotificationCenter.default.publisher(for: .openHelpTab)) { _ in
             selectedTab = .help
+        }
+        .alert("Clear Clipboard History?", isPresented: $showClearHistoryConfirm) {
+            Button("Clear History", role: .destructive) { ClipboardHistory.shared.clear() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will permanently delete all clipboard history. This action cannot be undone.")
         }
     }
 
@@ -136,6 +143,10 @@ private struct PreferencesView: View {
                 Text("When enabled, copied text keeps its original formatting (bold, links, colors, etc.) when pasted. When disabled, everything is pasted as plain text.")
                     .font(.callout)
                     .foregroundStyle(.secondary)
+
+                Button("Clear History…") { showClearHistoryConfirm = true }
+                    .buttonStyle(.bordered)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.red, lineWidth: 1.5))
             }
             Section("Startup") {
                 Toggle("Launch Modern Clipboard at login", isOn: $prefs.launchAtLogin)
