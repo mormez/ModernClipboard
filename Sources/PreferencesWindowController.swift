@@ -442,7 +442,6 @@ private struct PreferencesView: View {
                 HStack(spacing: 10) {
                     Button("Report a Bug…") { sendFeedback(.bug) }
                         .buttonStyle(.bordered)
-                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.red, lineWidth: 1.5))
                     Button("Request a Feature…") { sendFeedback(.feature) }
                         .buttonStyle(.bordered)
                 }
