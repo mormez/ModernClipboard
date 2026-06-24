@@ -12,7 +12,7 @@ Modern Swift clipboard manager for macOS 26 / Apple Silicon. Personal rebuild of
 
 ## Key architecture
 - Menu bar app (`LSUIElement=YES`, `NSApp.setActivationPolicy(.accessory)`)
-- Global hotkey: ⌘⌥V (clipboard popup) via `NSEvent` global monitor; ⇧⌘S (snippets popup)
+- Global hotkey: ⇧⌘V (clipboard popup) via `NSEvent` global monitor; ⇧⌘S (snippets popup)
 - Paste: set `NSPasteboard` then simulate ⌘V via `CGEvent` — requires Accessibility permission
 - `ClipboardMonitor` pauses 1.5 s after paste to avoid re-capturing our own paste
 - Snippets stored in `UserDefaults`, organized in folders (`SnippetManager`)
