@@ -5,9 +5,10 @@ final class PasteService {
     private init() {}
 
     // Menu-bar paste: capture previous app, set clipboard, re-activate, then paste.
-    func paste(item: ClipItem) {
+    func paste(item: ClipItem, matchStyle: Bool = false) {
+        ClipboardHistory.shared.markUsed(id: item.id)
         ClipboardMonitor.shared.pause()
-        setClipboard(item: item)
+        setClipboard(item: item, matchStyle: matchStyle)
         let target = NSWorkspace.shared.frontmostApplication
         activateThenPaste(target)
     }

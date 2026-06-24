@@ -39,7 +39,7 @@ final class MenuBarManager: NSObject {
 
         // --- History ---
         addHeader("Clipboard History", to: menu)
-        let items = ClipboardHistory.shared.items
+        let items = sortedHistoryItems()
         if items.isEmpty {
             let e = NSMenuItem(title: "  (empty)", action: nil, keyEquivalent: "")
             e.isEnabled = false
@@ -138,7 +138,19 @@ final class MenuBarManager: NSObject {
 
     @objc private func pasteHistoryItem(_ sender: NSMenuItem) {
         guard let item = sender.representedObject as? ClipItem else { return }
-        PasteService.shared.paste(item: item)
+        let matchStyle = NSEvent.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag)
+        PasteService.shared.paste(item: item, matchStyle: matchStyle)
+    }
+
+    /// Applies the user's history sort preference — kept in sync with ClipboardPopupController's sorting.
+    private func sortedHistoryItems() -> [ClipItem] {
+        let items = ClipboardHistory.shared.items
+        switch Preferences.shared.historySortOrder {
+        case .dateCreated:
+            return items
+        case .lastUsed:
+            return items.sorted { ($0.lastUsedAt ?? $0.timestamp) > ($1.lastUsedAt ?? $1.timestamp) }
+        }
     }
 
     @objc private func pasteSnippet(_ sender: NSMenuItem) {

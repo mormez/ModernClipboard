@@ -34,6 +34,7 @@ final class ClipboardHistory {
         guard let i = items.firstIndex(where: { $0.id == id }) else { return }
         items[i].lastUsedAt = Date()
         save()
+        notify()
     }
 
     func trim(to count: Int) {
