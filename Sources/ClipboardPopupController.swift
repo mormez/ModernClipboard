@@ -1009,7 +1009,7 @@ final class SnippetsPopupController {
             if popupState.selectedItemIndex < snippets.count { pasteSnippet(snippets[popupState.selectedItemIndex]) }
             return nil
         default:
-            if let ch = event.characters, let d = Int(ch), (1...9).contains(d), d-1 < snippets.count {
+            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (1...9).contains(d), d-1 < snippets.count {
                 pasteSnippet(snippets[d-1]); return nil
             }
             return event
