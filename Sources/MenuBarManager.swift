@@ -116,7 +116,10 @@ final class MenuBarManager: NSObject {
 
         menu.addItem(.separator())
 
-        menu.addItem(NSMenuItem(title: "Quit Modern Clipboard", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
+        let quit = NSMenuItem(title: "Quit Modern Clipboard", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        // Explicit blank image overrides macOS's automatic app-icon injection for "Quit" items.
+        quit.image = NSImage()
+        menu.addItem(quit)
 
         statusItem.menu = menu
     }
