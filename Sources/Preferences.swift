@@ -129,7 +129,8 @@ final class Preferences: ObservableObject {
         mainMenuKeyCode  = UInt32(ud.object(forKey: Key.mainMenuKeyCode.rawValue) as? Int ?? kVK_ANSI_V)
         mainMenuModifiers = UInt32(ud.object(forKey: Key.mainMenuModifiers.rawValue) as? Int ?? (cmdKey | shiftKey))
         excludedBundleIDs = ud.stringArray(forKey: Key.excludedBundleIDs.rawValue) ?? []
-        launchAtLogin    = ud.bool(forKey: Key.launchAtLogin.rawValue)
+        let launchAtLoginIsUnset = ud.object(forKey: Key.launchAtLogin.rawValue) == nil
+        launchAtLogin    = ud.object(forKey: Key.launchAtLogin.rawValue) as? Bool ?? true
         itemsPanelWidth  = ud.object(forKey: Key.itemsPanelWidth.rawValue) as? Int ?? 400
         previewLines     = ud.object(forKey: Key.previewLines.rawValue) as? Int ?? 2
         snippetsMenuKeyCode  = UInt32(ud.object(forKey: Key.snippetsMenuKeyCode.rawValue)  as? Int ?? kVK_ANSI_S)
@@ -144,6 +145,13 @@ final class Preferences: ObservableObject {
             ud.removeObject(forKey: "alwaysGroupInSubfolders")
         } else {
             historyMenuStyle = HistoryMenuStyle(rawValue: ud.integer(forKey: Key.historyMenuStyle.rawValue)) ?? .alwaysGrouped
+        }
+
+        // First launch ever: persist the default and actually register with the system,
+        // since didSet doesn't fire for assignments made within this initializer.
+        if launchAtLoginIsUnset {
+            set(launchAtLogin, for: .launchAtLogin)
+            updateLoginItem()
         }
     }
 
