@@ -116,9 +116,10 @@ final class MenuBarManager: NSObject {
 
         menu.addItem(.separator())
 
-        let quit = NSMenuItem(title: "Quit Modern Clipboard", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
-        // Explicit blank image overrides macOS's automatic app-icon injection for "Quit" items.
-        quit.image = NSImage()
+        // Routed through a custom selector (instead of NSApplication.terminate(_:) directly) so
+        // macOS doesn't pattern-match this as a standard "Quit" item and auto-inject an app icon.
+        let quit = NSMenuItem(title: "Quit Modern Clipboard", action: #selector(quitApp), keyEquivalent: "q")
+        quit.target = self
         menu.addItem(quit)
 
         statusItem.menu = menu
@@ -198,5 +199,9 @@ final class MenuBarManager: NSObject {
     @objc private func openHelp() {
         PreferencesWindowController.shared.showHelpTab()
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func quitApp() {
+        NSApp.terminate(nil)
     }
 }
