@@ -10,13 +10,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "?"
+        AppLogger.shared.log("──────── New Session ────────")
         AppLogger.shared.log("App launching — version \(version) (\(build)), macOS \(ProcessInfo.processInfo.operatingSystemVersionString)")
         AppLogger.shared.log("Accessibility permission granted: \(AXIsProcessTrustedWithOptions(nil))")
+
+        NSSetUncaughtExceptionHandler { exception in
+            AppLogger.shared.log("UNCAUGHT EXCEPTION: \(exception.name.rawValue) — \(exception.reason ?? "no reason"); stack: \(exception.callStackSymbols.joined(separator: " | "))")
+        }
 
         _ = Preferences.shared
         _ = ClipboardHistory.shared
         _ = SnippetManager.shared
         _ = UpdaterManager.shared
+
+        let p = Preferences.shared
+        AppLogger.shared.log("Settings — maxItems: \(p.maxHistoryItems), menuStyle: \(p.historyMenuStyle), sortOrder: \(p.historySortOrder), preserveFormatting: \(p.preserveFormatting), matchStyleModifier: \(p.matchStyleModifier), launchAtLogin: \(p.launchAtLogin), itemsPanelWidth: \(p.itemsPanelWidth), previewLines: \(p.previewLines), excludedApps: \(p.excludedBundleIDs.count)")
 
         menuBarManager = MenuBarManager()
         ClipboardMonitor.shared.start()

@@ -80,6 +80,7 @@ final class PasteService {
             if let o = observer {
                 NSWorkspace.shared.notificationCenter.removeObserver(o)
                 observer = nil
+                AppLogger.shared.log("Paste activation notification never fired — using safety-fallback timer instead")
                 self.triggerPaste()
             }
         }

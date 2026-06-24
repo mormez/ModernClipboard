@@ -93,7 +93,10 @@ final class ClipboardPopupController {
         previousApp = NSWorkspace.shared.frontmostApplication
         state.items = ClipboardHistory.shared.items
         state.hoverEnabled = false
-        guard !state.items.isEmpty else { return }
+        guard !state.items.isEmpty else {
+            AppLogger.shared.log("Clipboard popup requested but history is empty — nothing shown")
+            return
+        }
 
         currentStyle = Preferences.shared.historyMenuStyle
         let sortedItems: [ClipItem]
@@ -824,7 +827,10 @@ final class SnippetsPopupController {
     func toggle() { if panel?.isVisible == true { hide() } else { show() } }
 
     func show() {
-        guard !folders.isEmpty else { return }
+        guard !folders.isEmpty else {
+            AppLogger.shared.log("Snippets popup requested but there are no snippet folders — nothing shown")
+            return
+        }
         previousApp = NSWorkspace.shared.frontmostApplication
         popupState.selectedFolderIndex = 0
         popupState.expandedFolderIndex = nil
