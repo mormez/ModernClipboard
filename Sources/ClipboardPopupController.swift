@@ -205,8 +205,7 @@ final class ClipboardPopupController {
                 self?.pasteItem(item, matchStyle: NSEvent.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag))
             },
             onSelectClipFolder: { [weak self] fi in self?.openClipFolder(fi) },
-            onSelectSnippetFolder: { [weak self] si in self?.openSnippetFolder(si) },
-            onEditSnippets: { [weak self] in self?.editSnippets() }
+            onSelectSnippetFolder: { [weak self] si in self?.openSnippetFolder(si) }
         )
     }
 
@@ -223,7 +222,6 @@ final class ClipboardPopupController {
         if snippetCount > 0 {
             h += sectionHeaderH  // "Snippets" label
             h += CGFloat(snippetCount) * folderRowH
-            h += snippetsFooterH
         }
         h += bottomMargin
         panel?.setContentSize(NSSize(width: folderColW, height: min(h, maxH)))
@@ -285,6 +283,7 @@ final class ClipboardPopupController {
         showItemPanel(
             title: folder.name,
             count: folder.snippets.count,
+            extraHeight: snippetsFooterH,
             builder: {
                 ItemsPanelView(
                     state: self.state,
@@ -297,7 +296,8 @@ final class ClipboardPopupController {
                     },
                     onSelectRow: { [weak self] i in
                         if i < folder.snippets.count { self?.pasteSnippet(folder.snippets[i]) }
-                    }
+                    },
+                    onEditSnippets: { [weak self] in self?.editSnippets() }
                 )
             }
         )
@@ -310,7 +310,7 @@ final class ClipboardPopupController {
         refreshFolderPanel()
     }
 
-    private func showItemPanel(title: String, count: Int, builder: () -> ItemsPanelView) {
+    private func showItemPanel(title: String, count: Int, extraHeight: CGFloat = 0, builder: () -> ItemsPanelView) {
         if itemPanel == nil {
             let p = NSPanel(contentRect: .zero,
                             styleMask: [.borderless, .nonactivatingPanel],
@@ -320,7 +320,7 @@ final class ClipboardPopupController {
             p.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
             itemPanel = p
         }
-        let h = min(headerH + CGFloat(count) * itemRowH + bottomMargin, maxH)
+        let h = min(headerH + CGFloat(count) * itemRowH + extraHeight + bottomMargin, maxH)
         // Size the panel FIRST so that when we assign contentView macOS
         // automatically fills the hosting view to the correct bounds,
         // giving SwiftUI the right proposed width.
@@ -526,7 +526,6 @@ struct FolderPanelView: View {
     let onSelectFlatItem: (ClipItem) -> Void
     let onSelectClipFolder: (Int) -> Void
     let onSelectSnippetFolder: (Int) -> Void
-    let onEditSnippets: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -599,19 +598,6 @@ struct FolderPanelView: View {
                     )
                     if si < snippetFolders.count - 1 { Divider().padding(.leading, 10) }
                 }
-
-                Divider()
-
-                HStack(spacing: 8) {
-                    Image(systemName: "pencil").font(.system(size: 12)).foregroundStyle(.secondary)
-                    Text("Edit Snippets…").font(.system(size: 12))
-                    Spacer()
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 9)
-                .frame(maxWidth: .infinity, minHeight: 36)
-                .contentShape(Rectangle())
-                .onTapGesture(perform: onEditSnippets)
             }
         }
         .frame(maxWidth: .infinity)
@@ -636,6 +622,7 @@ struct ItemsPanelView: View {
     let title: String
     let rows: [ItemRow]
     let onSelectRow: (Int) -> Void
+    var onEditSnippets: (() -> Void)? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -659,6 +646,21 @@ struct ItemsPanelView: View {
                     onHover: { if $0 { state.selectedItemIndex = i } }
                 )
                 if i < rows.count - 1 { Divider().padding(.leading, 10) }
+            }
+
+            if let onEditSnippets {
+                Divider()
+
+                HStack(spacing: 8) {
+                    Image(systemName: "pencil").font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text("Edit Snippets…").font(.system(size: 12))
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 9)
+                .frame(maxWidth: .infinity, minHeight: 36)
+                .contentShape(Rectangle())
+                .onTapGesture(perform: onEditSnippets)
             }
         }
         .frame(width: panelWidth)
@@ -888,8 +890,7 @@ final class SnippetsPopupController {
             state: popupState,
             folders: folders,
             onSelectFolder: { [weak self] fi in self?.openFolder(fi) },
-            onHoverFolder:  { [weak self] fi in self?.popupState.selectedFolderIndex = fi },
-            onEditSnippets: { [weak self] in self?.editSnippets() }
+            onHoverFolder:  { [weak self] fi in self?.popupState.selectedFolderIndex = fi }
         )
     }
 
@@ -900,7 +901,7 @@ final class SnippetsPopupController {
     }
 
     private func sizePanel() {
-        let h = min(headerH + CGFloat(folders.count) * folderRowH + footerH + bottomMargin, maxH)
+        let h = min(headerH + CGFloat(folders.count) * folderRowH + bottomMargin, maxH)
         panel?.setContentSize(NSSize(width: folderColW, height: h))
     }
 
@@ -933,7 +934,7 @@ final class SnippetsPopupController {
             itemPanel = p
         }
         itemPanel?.contentView = NSHostingView(rootView: makeItemView(folder: folder, folderIndex: fi))
-        let h = min(headerH + CGFloat(folder.snippets.count) * 44 + bottomMargin, maxH)
+        let h = min(headerH + CGFloat(folder.snippets.count) * 44 + footerH + bottomMargin, maxH)
         itemPanel?.setContentSize(NSSize(width: itemColW, height: h))
         positionItemPanel()
         itemPanel?.orderFront(nil)
@@ -944,7 +945,8 @@ final class SnippetsPopupController {
             state: popupState,
             folder: folder,
             onSelect: { [weak self] i in self?.pasteSnippet(folder.snippets[i]) },
-            onHover:  { [weak self] i in self?.popupState.selectedItemIndex = i }
+            onHover:  { [weak self] i in self?.popupState.selectedItemIndex = i },
+            onEditSnippets: { [weak self] in self?.editSnippets() }
         )
     }
 
@@ -1045,7 +1047,6 @@ struct SnippetsFolderPanelView: View {
     let folders: [SnippetFolder]
     let onSelectFolder: (Int) -> Void
     let onHoverFolder: (Int) -> Void
-    let onEditSnippets: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -1077,19 +1078,6 @@ struct SnippetsFolderPanelView: View {
                     }
                 }
             }
-
-            Divider()
-
-            HStack(spacing: 8) {
-                Image(systemName: "pencil").font(.system(size: 12)).foregroundStyle(.secondary)
-                Text("Edit Snippets…").font(.system(size: 12))
-                Spacer()
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 9)
-            .frame(maxWidth: .infinity, minHeight: 36)
-            .contentShape(Rectangle())
-            .onTapGesture(perform: onEditSnippets)
         }
         .frame(maxWidth: .infinity)
         .background(.regularMaterial)
@@ -1104,6 +1092,7 @@ struct SnippetsItemsPanelView: View {
     let folder: SnippetFolder
     let onSelect: (Int) -> Void
     let onHover: (Int) -> Void
+    let onEditSnippets: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -1138,6 +1127,19 @@ struct SnippetsItemsPanelView: View {
                     if i < folder.snippets.count - 1 { Divider().padding(.leading, 10) }
                 }
             }
+
+            Divider()
+
+            HStack(spacing: 8) {
+                Image(systemName: "pencil").font(.system(size: 12)).foregroundStyle(.secondary)
+                Text("Edit Snippets…").font(.system(size: 12))
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .frame(maxWidth: .infinity, minHeight: 36)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onEditSnippets)
         }
         .frame(width: 400)
         .background(.regularMaterial)
