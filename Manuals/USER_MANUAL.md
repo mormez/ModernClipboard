@@ -1,6 +1,6 @@
 # Modern Clipboard — User Manual
 
-**Version 1.1 · macOS 15+ · Apple Silicon**
+**Version 1.0.0 · macOS 15+ · Apple Silicon**
 
 ---
 
