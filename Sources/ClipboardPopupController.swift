@@ -60,6 +60,7 @@ final class ClipboardPopupController {
     private let headerVisualH: CGFloat  = 36  // actual rendered height: padding(10+10) + 16pt content
     private let folderRowH: CGFloat     = 40
     private let sectionHeaderH: CGFloat = 28
+    private let snippetsFooterH: CGFloat = 37
     private let bottomMargin: CGFloat   = 12
     private let maxH: CGFloat           = 600
     // Row height scales with preview lines: 24px base + 20px per line
@@ -204,8 +205,15 @@ final class ClipboardPopupController {
                 self?.pasteItem(item, matchStyle: NSEvent.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag))
             },
             onSelectClipFolder: { [weak self] fi in self?.openClipFolder(fi) },
-            onSelectSnippetFolder: { [weak self] si in self?.openSnippetFolder(si) }
+            onSelectSnippetFolder: { [weak self] si in self?.openSnippetFolder(si) },
+            onEditSnippets: { [weak self] in self?.editSnippets() }
         )
+    }
+
+    private func editSnippets() {
+        hide()
+        SnippetsEditorWindowController.shared.showWindow(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
 
     private func sizeFolderPanel() {
@@ -215,6 +223,7 @@ final class ClipboardPopupController {
         if snippetCount > 0 {
             h += sectionHeaderH  // "Snippets" label
             h += CGFloat(snippetCount) * folderRowH
+            h += snippetsFooterH
         }
         h += bottomMargin
         panel?.setContentSize(NSSize(width: folderColW, height: min(h, maxH)))
@@ -517,6 +526,7 @@ struct FolderPanelView: View {
     let onSelectFlatItem: (ClipItem) -> Void
     let onSelectClipFolder: (Int) -> Void
     let onSelectSnippetFolder: (Int) -> Void
+    let onEditSnippets: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -589,6 +599,19 @@ struct FolderPanelView: View {
                     )
                     if si < snippetFolders.count - 1 { Divider().padding(.leading, 10) }
                 }
+
+                Divider()
+
+                HStack(spacing: 8) {
+                    Image(systemName: "pencil").font(.system(size: 12)).foregroundStyle(.secondary)
+                    Text("Edit Snippets…").font(.system(size: 12))
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 9)
+                .frame(maxWidth: .infinity, minHeight: 36)
+                .contentShape(Rectangle())
+                .onTapGesture(perform: onEditSnippets)
             }
         }
         .frame(maxWidth: .infinity)
