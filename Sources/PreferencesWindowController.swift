@@ -28,23 +28,35 @@ final class PreferencesWindowController: NSWindowController {
         NotificationCenter.default.post(name: .stopHotkeyRecording, object: nil)
         super.showWindow(sender)
     }
+
+    func showHelpTab() {
+        showWindow(nil)
+        NotificationCenter.default.post(name: .openHelpTab, object: nil)
+    }
 }
 
 private struct PreferencesView: View {
     @ObservedObject private var prefs = Preferences.shared
     @State private var selectedExcludedID: String? = nil   // used for row highlight only
+    @State private var selectedTab: Tab = .general
+
+    private enum Tab: Hashable { case general, exclude, help, about }
 
     private let historyOptions   = stride(from: 5, through: 50, by: 5).map { $0 }
     private let widthOptions     = stride(from: 200, through: 600, by: 50).map { $0 }
     private let lineOptions      = [1, 2, 3]
 
     var body: some View {
-        TabView {
-            generalTab.tabItem { Label("General", systemImage: "gear") }
-            excludeTab.tabItem { Label("Exclude Apps", systemImage: "app.badge.minus") }
-            aboutTab.tabItem { Label("About", systemImage: "info.circle") }
+        TabView(selection: $selectedTab) {
+            generalTab.tabItem { Label("General", systemImage: "gear") }.tag(Tab.general)
+            excludeTab.tabItem { Label("Exclude Apps", systemImage: "app.badge.minus") }.tag(Tab.exclude)
+            helpTab.tabItem { Label("Help", systemImage: "questionmark.circle") }.tag(Tab.help)
+            aboutTab.tabItem { Label("About", systemImage: "info.circle") }.tag(Tab.about)
         }
         .frame(width: 480, height: 550)
+        .onReceive(NotificationCenter.default.publisher(for: .openHelpTab)) { _ in
+            selectedTab = .help
+        }
     }
 
     private var generalTab: some View {
@@ -392,20 +404,6 @@ private struct PreferencesView: View {
             .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.green, lineWidth: 1.5))
             .padding(.top, 4)
 
-            HStack(spacing: 10) {
-                Button("Report a Bug…") { sendFeedback(.bug) }
-                    .buttonStyle(.bordered)
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.red, lineWidth: 1.5))
-                Button("Request a Feature…") { sendFeedback(.feature) }
-                    .buttonStyle(.bordered)
-            }
-            .padding(.top, 4)
-
-            ExportDiagnosticsButton()
-            Text("Attach this to a bug report to help us track down what went wrong.")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
             Spacer()
 
             HStack(spacing: 4) {
@@ -413,6 +411,38 @@ private struct PreferencesView: View {
                 CopyrightLinkView(label: "See license")
             }
             .font(.system(size: 13))
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var helpTab: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "questionmark.circle")
+                .font(.system(size: 40))
+                .foregroundStyle(.secondary)
+            Text("Help & Feedback").font(.title2.bold())
+            Text("Run into a problem or have an idea? Let us know.")
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            Divider().padding(.horizontal, 40)
+
+            VStack(spacing: 10) {
+                HStack(spacing: 10) {
+                    Button("Report a Bug…") { sendFeedback(.bug) }
+                        .buttonStyle(.bordered)
+                        .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.red, lineWidth: 1.5))
+                    Button("Request a Feature…") { sendFeedback(.feature) }
+                        .buttonStyle(.bordered)
+                }
+
+                ExportDiagnosticsButton()
+                Text("Attach this to a bug report to help us track down what went wrong.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
 
             Divider().padding(.horizontal, 40)
 
@@ -435,7 +465,8 @@ private struct PreferencesView: View {
                     )
                 }
             }
-            .padding(.bottom, 4)
+
+            Spacer()
         }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)

@@ -7,6 +7,7 @@ extension Notification.Name {
     static let preferencesChanged = Notification.Name("com.modernclipboard.preferencesChanged")
     static let hotkeyChanged = Notification.Name("com.modernclipboard.hotkeyChanged")
     static let stopHotkeyRecording = Notification.Name("com.modernclipboard.stopHotkeyRecording")
+    static let openHelpTab = Notification.Name("com.modernclipboard.openHelpTab")
 }
 
 extension NSImage {

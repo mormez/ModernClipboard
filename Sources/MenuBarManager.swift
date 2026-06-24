@@ -114,6 +114,10 @@ final class MenuBarManager: NSObject {
         prefs.target = self
         menu.addItem(prefs)
 
+        let help = NSMenuItem(title: "Help & Feedback…", action: #selector(openHelp), keyEquivalent: "")
+        help.target = self
+        menu.addItem(help)
+
         menu.addItem(.separator())
 
         menu.addItem(NSMenuItem(title: "Quit Modern Clipboard", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
@@ -200,6 +204,11 @@ final class MenuBarManager: NSObject {
 
     @objc private func openPreferences() {
         PreferencesWindowController.shared.showWindow(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func openHelp() {
+        PreferencesWindowController.shared.showHelpTab()
         NSApp.activate(ignoringOtherApps: true)
     }
 }
