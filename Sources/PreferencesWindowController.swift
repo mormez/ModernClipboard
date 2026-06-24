@@ -6,7 +6,7 @@ import UniformTypeIdentifiers
 final class PreferencesWindowController: NSWindowController {
     static let shared: PreferencesWindowController = {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 550),
+            contentRect: NSRect(x: 0, y: 0, width: 580, height: 550),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -53,7 +53,7 @@ private struct PreferencesView: View {
             helpTab.tabItem { Label("Help", systemImage: "questionmark.circle") }.tag(Tab.help)
             aboutTab.tabItem { Label("About", systemImage: "info.circle") }.tag(Tab.about)
         }
-        .frame(width: 480, height: 550)
+        .frame(width: 580, height: 550)
         .onReceive(NotificationCenter.default.publisher(for: .openHelpTab)) { _ in
             selectedTab = .help
         }

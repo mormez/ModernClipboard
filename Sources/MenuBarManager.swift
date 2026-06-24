@@ -102,10 +102,6 @@ final class MenuBarManager: NSObject {
         clear.target = self
         menu.addItem(clear)
 
-        let snippetsEditor = NSMenuItem(title: "Edit Snippets…", action: #selector(openSnippetsEditor), keyEquivalent: "")
-        snippetsEditor.target = self
-        menu.addItem(snippetsEditor)
-
         let updateItem = NSMenuItem(title: "Check for Updates…", action: #selector(checkForUpdates), keyEquivalent: "")
         updateItem.target = self
         menu.addItem(updateItem)
@@ -191,11 +187,6 @@ final class MenuBarManager: NSObject {
         alert.addButton(withTitle: "Cancel")
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         ClipboardHistory.shared.clear()
-    }
-
-    @objc private func openSnippetsEditor() {
-        SnippetsEditorWindowController.shared.showWindow(nil)
-        NSApp.activate(ignoringOtherApps: true)
     }
 
     @objc private func checkForUpdates() {

@@ -788,6 +788,7 @@ final class SnippetsPopupController {
     private let itemColW: CGFloat     = 400
     private let headerH: CGFloat      = 50
     private let folderRowH: CGFloat   = 40
+    private let footerH: CGFloat      = 37
     private let bottomMargin: CGFloat = 12
     private let maxH: CGFloat         = 500
 
@@ -864,12 +865,19 @@ final class SnippetsPopupController {
             state: popupState,
             folders: folders,
             onSelectFolder: { [weak self] fi in self?.openFolder(fi) },
-            onHoverFolder:  { [weak self] fi in self?.popupState.selectedFolderIndex = fi }
+            onHoverFolder:  { [weak self] fi in self?.popupState.selectedFolderIndex = fi },
+            onEditSnippets: { [weak self] in self?.editSnippets() }
         )
     }
 
+    private func editSnippets() {
+        hide()
+        SnippetsEditorWindowController.shared.showWindow(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
     private func sizePanel() {
-        let h = min(headerH + CGFloat(folders.count) * folderRowH + bottomMargin, maxH)
+        let h = min(headerH + CGFloat(folders.count) * folderRowH + footerH + bottomMargin, maxH)
         panel?.setContentSize(NSSize(width: folderColW, height: h))
     }
 
@@ -1014,6 +1022,7 @@ struct SnippetsFolderPanelView: View {
     let folders: [SnippetFolder]
     let onSelectFolder: (Int) -> Void
     let onHoverFolder: (Int) -> Void
+    let onEditSnippets: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -1045,6 +1054,19 @@ struct SnippetsFolderPanelView: View {
                     }
                 }
             }
+
+            Divider()
+
+            HStack(spacing: 8) {
+                Image(systemName: "pencil").font(.system(size: 12)).foregroundStyle(.secondary)
+                Text("Edit Snippets…").font(.system(size: 12))
+                Spacer()
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .frame(maxWidth: .infinity, minHeight: 36)
+            .contentShape(Rectangle())
+            .onTapGesture(perform: onEditSnippets)
         }
         .frame(maxWidth: .infinity)
         .background(.regularMaterial)
