@@ -687,8 +687,12 @@ private struct ExportDiagnosticsButton: View {
         let src = AppLogger.fileURL
         guard FileManager.default.fileExists(atPath: src.path) else { flash(.failure); return }
 
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd 'at' HH.mm.ss"
+        let timestamp = formatter.string(from: Date())
+
         let panel = NSSavePanel()
-        panel.nameFieldStringValue = "Modern Clipboard Diagnostics.log"
+        panel.nameFieldStringValue = "Modern Clipboard Diagnostics \(timestamp).log"
         panel.allowedContentTypes = [.plainText]
         panel.directoryURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
 
