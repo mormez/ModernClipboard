@@ -146,7 +146,6 @@ private struct PreferencesView: View {
 
                 Button("Clear History…") { showClearHistoryConfirm = true }
                     .buttonStyle(.bordered)
-                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.red, lineWidth: 1.5))
             }
             Section("Startup") {
                 Toggle("Launch Modern Clipboard at login", isOn: $prefs.launchAtLogin)
