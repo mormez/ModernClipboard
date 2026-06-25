@@ -47,7 +47,7 @@ SOURCES = [
 # resource files
 RESOURCES = [
     "Assets.xcassets",
-    "Modern Clipboard Quick Start v1.0.0.docx",
+    "Modern Clipboard Quick Start v1.0.0.pdf",
     "Modern Clipboard User Manual v1.0.0.docx",
 ]
 

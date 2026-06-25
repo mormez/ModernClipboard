@@ -46,13 +46,13 @@ Modern Clipboard is a lightweight menu bar app that keeps a history of everythin
 
 **To install:** Copy `Modern Clipboard.app` to your `/Applications` folder and double-click to launch.
 
-**To launch at login:** Enable **Preferences → General → Launch Modern Clipboard at login**.
+**Launch at login:** Enabled by default on new installs. To turn it off, disable **Preferences → General → Launch Modern Clipboard at login**.
 
 ---
 
 ## 3. First Launch & Permissions
 
-Modern Clipboard requires **Accessibility permission** to simulate the paste keystroke (⌘V) on your behalf. Without it, you can browse history but pasting will not work.
+Modern Clipboard requires **Accessibility permission** to simulate the paste keystroke (⌘V, i.e. Command-V) on your behalf. Without it, you can browse history but pasting will not work.
 
 ### Granting Accessibility Permission
 
@@ -60,7 +60,7 @@ Modern Clipboard requires **Accessibility permission** to simulate the paste key
 2. In **System Settings → Privacy & Security → Accessibility**, find **Modern Clipboard** and toggle it on.
 3. You may be asked to enter your password.
 
-If you missed the prompt, open **Preferences** (⌘, from the menu bar), go to the **General** tab, and click **Open System Settings** next to the Accessibility status indicator.
+If you missed the prompt, open **Preferences** (⌘, — Command-Comma — from the menu bar), go to the **General** tab, and click **Open System Settings** next to the Accessibility status indicator.
 
 **Status indicators in Preferences:**
 
@@ -84,19 +84,26 @@ Clipboard History          ← section header
   …
 ────────────────────────
   Snippets ▶              ← submenu per folder
+    [snippet 1]
+    [snippet 2]
+    …
+    Edit Snippets…
 ────────────────────────
-  Clear History…
-  Edit Snippets…
   Check for Updates…
+  Help & Feedback…
   Preferences…            ⌘,
   Quit Modern Clipboard    ⌘Q
 ```
 
-- Items 1–9 have keyboard shortcuts (⌘1 through ⌘9) when the menu is open.
-- Click any history item or snippet to paste it into your frontmost application.
-- **Clear History…** asks for confirmation before deleting all items.
+(⌘1, ⌘2, … = Command-1, Command-2; ⌘, = Command-Comma; ⌘Q = Command-Q)
 
-> **Tip:** The popup (⌘⇧V) is faster for navigating large histories — the menu is best for quick one-click access to recent items.
+- Items 1–9 have keyboard shortcuts (⌘1 through ⌘9, i.e. Command-1 through Command-9) when the menu is open.
+- Click any history item or snippet to paste it into your frontmost application.
+- Each snippet folder's submenu ends with **Edit Snippets…**, which opens the snippet editor (see §6).
+- **Help & Feedback…** opens Preferences with the Help tab selected (see §8).
+- Clearing your clipboard history is done from **Preferences → General**, not from this menu (see §5 "Clearing History").
+
+> **Tip:** The popup (⇧⌘V, i.e. Shift-Command-V) is faster for navigating large histories — the menu is best for quick one-click access to recent items.
 
 ---
 
@@ -124,7 +131,7 @@ Modern Clipboard polls the clipboard every 0.5 seconds. When it detects new cont
 
 ### The History Popup
 
-Press **⌘⇧V** (default; customizable) anywhere to open the history popup.
+Press **⇧⌘V** (Shift-Command-V; default; customizable) anywhere to open the history popup.
 
 The popup has two panels:
 
@@ -138,18 +145,18 @@ The popup has two panels:
 | Key | Action |
 |-----|--------|
 | ↓ / ↑ | Move between groups |
-| → or ⏎ | Open selected group |
+| → or ⏎ (Return) | Open selected group |
 | 1 – 9 | Jump directly to item (flat mode only) |
-| Esc | Close popup |
+| Esc (Escape) | Close popup |
 
 **Item level (inside a group):**
 
 | Key | Action |
 |-----|--------|
 | ↓ / ↑ | Move between items |
-| ⏎ | Paste selected item |
+| ⏎ (Return) | Paste selected item |
 | 1 – 9 | Paste item at that position |
-| ← or Esc | Return to group list |
+| ← or Esc (Escape) | Return to group list |
 
 You can also use the mouse: hover to highlight, click to select or paste.
 
@@ -165,18 +172,18 @@ Configure in **Preferences → General → History Menu Style**:
 
 #### How Pasting Works
 
-1. Select an item and press ⏎ (or click).
+1. Select an item and press ⏎ (Return), or click.
 2. The popup closes immediately.
 3. The app you were using before the popup is brought to the front.
 4. Modern Clipboard sets the clipboard to the selected item.
-5. A ⌘V keystroke is sent to paste it.
+5. A ⌘V (Command-V) keystroke is sent to paste it.
 6. The clipboard monitor pauses briefly (1.5 s) to avoid re-capturing the pasted content.
 
 > **Note:** Steps 4 and 5 require Accessibility permission. If paste does not work, check the permission status in Preferences.
 
 #### Paste and Match Style
 
-If an item was stored with formatting (see "Preserving formatting" above), you can still paste it as plain text on demand: hold down the **paste-and-match-style modifier** (⌥ Option by default; configurable in **Preferences → Hotkeys**) while pressing ⏎ or clicking the item. This strips all formatting and pastes plain text only, regardless of the **Preserve formatting when pasting** setting.
+If an item was stored with formatting (see "Preserving formatting" above), you can still paste it as plain text on demand: hold down the **paste-and-match-style modifier** (⌥ Option by default; configurable in **Preferences → Hotkeys**) while pressing ⏎ (Return) or clicking the item. This strips all formatting and pastes plain text only, regardless of the **Preserve formatting when pasting** setting.
 
 A hint in the popup (e.g., "⌥ to match style") shows the currently configured modifier key.
 
@@ -189,7 +196,7 @@ In **Preferences → General → Sort Order**, choose:
 
 #### Clearing History
 
-Click **Clear History…** in the menu bar menu. A confirmation dialog appears before anything is deleted.
+Go to **Preferences → General → Clipboard History** and click **Clear History…**. A confirmation dialog appears, warning that this permanently deletes all clipboard history and cannot be undone.
 
 ---
 
@@ -199,17 +206,21 @@ Snippets are reusable pieces of text you save manually. Unlike history items, th
 
 ### Opening the Snippets Popup
 
-Press **⇧⌘S** (default; customizable) anywhere to open the snippets popup.
+Press **⇧⌘S** (Shift-Command-S; default; customizable) anywhere to open the snippets popup.
 
 Navigation is identical to the history popup:
 
 - Left panel shows your snippet folders.
 - Right panel shows snippets in the selected folder.
-- ↓/↑ to move, → or ⏎ to open a folder, ⏎ to paste a snippet, ← or Esc to go back.
+- ↓/↑ to move, → or ⏎ (Return) to open a folder, ⏎ (Return) to paste a snippet, ← or Esc (Escape) to go back.
 
 ### Managing Snippets — The Editor
 
-Open the snippet editor via **menu bar → Edit Snippets…**
+Open the snippet editor via **Edit Snippets…**, which appears in any of these places:
+
+- At the bottom of a folder's items panel in the **snippets popup** (⇧⌘S).
+- At the bottom of a snippet folder's items panel in the **clipboard history popup** (⇧⌘V).
+- Inside a folder's submenu in the **menu bar icon's dropdown** (see §4).
 
 The editor has three columns:
 
@@ -244,47 +255,47 @@ Click any snippet to edit it:
 
 ### Global Hotkeys (work system-wide)
 
-| Hotkey | Action |
-|--------|--------|
-| **⌘⇧V** | Open clipboard history popup |
-| **⇧⌘S** | Open snippets popup |
+| Hotkey | | Action |
+|--------|--------------|--------|
+| **⇧⌘V** | Shift-Command-V | Open clipboard history popup |
+| **⇧⌘S** | Shift-Command-S | Open snippets popup |
 
 Both hotkeys are customizable in **Preferences → General → Hotkeys**.
 
 ### Inside a Popup
 
-| Key | Action |
-|-----|--------|
-| ↓ / ↑ | Navigate items or groups |
-| → | Open selected group / enter item panel |
-| ← | Return to group list |
-| ⏎ | Paste selected item / open group |
-| 1 – 9 | Jump to or paste item at that number |
-| Esc | Close popup (or return to group list if in items) |
+| Key | | Action |
+|-----|--------------|--------|
+| ↓ / ↑ | Down Arrow / Up Arrow | Navigate items or groups |
+| → | Right Arrow | Open selected group / enter item panel |
+| ← | Left Arrow | Return to group list |
+| ⏎ | Return | Paste selected item / open group |
+| 1 – 9 | — | Jump to or paste item at that number |
+| Esc | Escape | Close popup (or return to group list if in items) |
 
 ### Menu Bar
 
-| Hotkey | Action |
-|--------|--------|
-| ⌘, | Open Preferences |
-| ⌘Q | Quit Modern Clipboard |
-| ⌘1 – ⌘9 | Paste history item 1–9 (when menu is open) |
+| Hotkey | | Action |
+|--------|--------------|--------|
+| ⌘, | Command-Comma | Open Preferences |
+| ⌘Q | Command-Q | Quit Modern Clipboard |
+| ⌘1 – ⌘9 | Command-1 through Command-9 | Paste history item 1–9 (when menu is open) |
 
 ### Changing a Hotkey
 
 1. Open **Preferences → General**.
 2. Click the hotkey button you want to change (it turns red and shows "Press shortcut…").
-3. Press your desired key combination (must include at least one modifier: ⌘, ⌥, ⇧, or ⌃).
+3. Press your desired key combination (must include at least one modifier: ⌘ Command, ⌥ Option, ⇧ Shift, or ⌃ Control).
 4. The new shortcut is registered immediately.
 5. Press **Restore Default** to revert to the original hotkey.
 
-> Press Esc while recording to cancel without changing the hotkey.
+> Press Esc (Escape) while recording to cancel without changing the hotkey.
 
 ---
 
 ## 8. Preferences
 
-Open Preferences with ⌘, or via the menu bar menu.
+Open Preferences with ⌘, (Command-Comma) or via the menu bar menu.
 
 ### General Tab
 
@@ -305,11 +316,11 @@ Shows whether Accessibility permission has been granted. Click **Open System Set
 
 #### Startup
 
-**Launch Modern Clipboard at login** — registers the app with macOS Login Items so it starts automatically when you log in.
+**Launch Modern Clipboard at login** — registers the app with macOS Login Items so it starts automatically when you log in. Enabled by default on new installs.
 
 #### Hotkeys
 
-Two hotkey recorders — one for the history popup, one for the snippets popup. Click either to record a new shortcut. Click **Restore Default** to go back to ⌘⇧V or ⇧⌘S.
+Two hotkey recorders — one for the history popup, one for the snippets popup. Click either to record a new shortcut. Click **Restore Default** to go back to ⇧⌘V (Shift-Command-V) or ⇧⌘S (Shift-Command-S).
 
 **Paste and match style modifier** — choose which modifier key (⌥ Option, ⌃ Control, ⇧ Shift, or ⌘ Command) temporarily forces plain-text pasting from the history popup, overriding **Preserve formatting when pasting** for that one paste. Default is ⌥ Option. See §5 "Paste and Match Style."
 
@@ -346,6 +357,15 @@ Click **Auto-exclude known password managers**. This immediately adds the follow
 Each row shows the app icon, display name, and bundle ID so you can easily identify entries.
 
 ---
+
+### Help Tab
+
+Where to go when something goes wrong or you have an idea:
+
+- **Report a Bug…** — opens a pre-addressed email to report an issue
+- **Request a Feature…** — opens a pre-addressed email to suggest something new
+- **Export Diagnostics…** — saves a diagnostics log file (settings snapshot and recent activity) to ~/Downloads; attach this to a bug report to help track down what went wrong
+- **Documentation** — download buttons for the **Quick Start Guide** and **User Manual** (`.docx`), defaulting to ~/Downloads
 
 ### About Tab
 
@@ -390,7 +410,7 @@ Modern Clipboard uses the **Sparkle** framework for software updates.
 
 ---
 
-### History popup doesn't open on ⌘⇧V
+### History popup doesn't open on ⇧⌘V (Shift-Command-V)
 
 **Possible causes and fixes:**
 
@@ -431,7 +451,7 @@ This is expected. The popup shows a small thumbnail (18×18 px) and the "[Image]
 
 ### Clearing history to start fresh
 
-Click the menu bar icon, then **Clear History…** and confirm. This is permanent and cannot be undone.
+Go to **Preferences → General → Clipboard History**, click **Clear History…**, and confirm. This is permanent and cannot be undone.
 
 ---
 

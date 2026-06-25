@@ -464,7 +464,7 @@ private struct PreferencesView: View {
                         label: "Quick Start Guide",
                         icon: "arrow.down.doc",
                         resource: "Modern Clipboard Quick Start v1.0.0",
-                        ext: "docx"
+                        ext: "pdf"
                     )
                     DocDownloadButton(
                         label: "User Manual",

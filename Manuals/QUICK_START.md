@@ -11,6 +11,8 @@ Get up and running in under 5 minutes.
 1. Copy **Modern Clipboard.app** to your `/Applications` folder.
 2. Double-click to launch. A clipboard icon appears in your menu bar.
 
+> **Note:** Modern Clipboard launches automatically at login by default. To turn this off, go to **Preferences → General** and disable **Launch Modern Clipboard at login**.
+
 ---
 
 ## Step 2 — Grant Accessibility Permission
@@ -25,20 +27,20 @@ When prompted, click **Open System Settings** → find **Modern Clipboard** → 
 
 ## Step 3 — Copy Something
 
-Copy any text as you normally would (⌘C). Modern Clipboard captures it automatically — no action needed.
+Copy any text as you normally would (⌘C, i.e. Command-C). Modern Clipboard captures it automatically — no action needed.
 
 ---
 
 ## Step 4 — Paste from History
 
-Press **⌘⇧V** from anywhere to open the history popup.
+Press **⇧⌘V** (Shift-Command-V) from anywhere to open the history popup.
 
 | Key | What it does |
 |-----|-------------|
 | ↓ / ↑ | Move between items |
-| ⏎ | Paste the selected item |
+| ⏎ (Return) | Paste the selected item |
 | 1 – 9 | Instantly paste item 1–9 |
-| Esc | Close without pasting |
+| Esc (Escape) | Close without pasting |
 
 The popup closes and pastes into whatever app you were using.
 
@@ -50,23 +52,25 @@ The popup closes and pastes into whatever app you were using.
 
 Snippets are text blocks you save once and reuse forever — great for signatures, templates, or common replies.
 
-1. Click the menu bar icon → **Edit Snippets…**
-2. Click **+** in the left column to create a folder.
-3. Select your folder, then click **+** in the middle column to add a snippet.
-4. Enter a title and your text, then click **Save**.
+1. Press **⇧⌘S** (Shift-Command-S) to open the snippets popup.
+2. Open the **My Snippets** folder.
+3. Click **Edit Snippets…** at the bottom of the panel to open the snippet editor.
+4. Click **+** in the left column to create a folder.
+5. Select your folder, then click **+** in the middle column to add a snippet.
+6. Enter a title and your text, then click **Save**.
 
-Press **⇧⌘S** anywhere to open your snippets and paste one.
+Press **⇧⌘S** (Shift-Command-S) anywhere to open your snippets and paste one.
 
 ---
 
 ## That's it!
 
-| Action | Shortcut |
-|--------|----------|
-| Open clipboard history | **⌘⇧V** |
-| Open snippets | **⇧⌘S** |
-| Open Preferences | **⌘,** |
+| Action | Shortcut | |
+|--------|----------|--------------|
+| Open clipboard history | **⇧⌘V** | Shift-Command-V |
+| Open snippets | **⇧⌘S** | Shift-Command-S |
+| Open Preferences | **⌘,** | Command-Comma |
 
-**Both shortcuts are customizable** — go to **Preferences → General → Hotkeys** to change them.
+Ran into a problem or have an idea? Open **Preferences → Help** to report a bug, request a feature, or export diagnostics.
 
 For the full feature reference, see the [User Manual](USER_MANUAL.md).
