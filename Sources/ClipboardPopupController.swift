@@ -598,7 +598,8 @@ struct FolderPanelView: View {
                         isSelected: state.selectedRowIndex == row || state.expandedPane == .snippet(folderIndex: si),
                         hoverEnabled: state.hoverEnabled,
                         onSelect: { onSelectSnippetFolder(si) },
-                        onHover: { if $0 { state.selectedRowIndex = row } }
+                        onHover: { if $0 { state.selectedRowIndex = row } },
+                        indent: 14
                     )
                 }
 
@@ -725,6 +726,7 @@ struct PopupFolderRow: View {
     let hoverEnabled: Bool
     let onSelect: () -> Void
     let onHover: (Bool) -> Void
+    var indent: CGFloat = 0
 
     var body: some View {
         HStack(spacing: 8) {
@@ -733,7 +735,8 @@ struct PopupFolderRow: View {
             Spacer()
             Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold)).foregroundStyle(.tertiary)
         }
-        .padding(.horizontal, 12)
+        .padding(.leading, 12 + indent)
+        .padding(.trailing, 12)
         .padding(.vertical, 9)
         .frame(maxWidth: .infinity, minHeight: 40)
         .background(isSelected ? Color.accentColor.opacity(0.15) : Color.clear)
@@ -1076,7 +1079,8 @@ struct SnippetsFolderPanelView: View {
                             isSelected: state.selectedFolderIndex == fi || state.expandedFolderIndex == fi,
                             hoverEnabled: state.hoverEnabled,
                             onSelect: { onSelectFolder(fi) },
-                            onHover: { if $0 { onHoverFolder(fi) } }
+                            onHover: { if $0 { onHoverFolder(fi) } },
+                            indent: 14
                         )
                     }
                 }
