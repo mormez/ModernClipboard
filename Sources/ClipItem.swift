@@ -1,5 +1,6 @@
 import AppKit
 import Foundation
+import UniformTypeIdentifiers
 
 enum ClipType: String, Codable {
     case string
@@ -29,12 +30,13 @@ struct ClipItem: Identifiable, Codable, Equatable {
             return "[Image]"
         case .fileURL:
             guard let s = stringValue, !s.isEmpty else { return "[File]" }
-            let names = s.split(separator: "\n").map { URL(string: String($0))?.lastPathComponent ?? String($0) }
-            switch names.count {
-            case 0:  return "[File]"
-            case 1:  return names[0]
-            default: return "\(names[0]) + \(names.count - 1) more"
+            let urls = s.split(separator: "\n").compactMap { URL(string: String($0)) }
+            guard let first = urls.first else { return "[File]" }
+            let isImage = UTType(filenameExtension: first.pathExtension)?.conforms(to: .image) ?? false
+            if urls.count == 1 {
+                return "\(isImage ? "[Image]" : "[File]") \(first.lastPathComponent)"
             }
+            return "\(isImage ? "[Images]" : "[Files]") \(first.lastPathComponent) + \(urls.count - 1) more"
         }
     }
 

@@ -61,20 +61,11 @@ final class ClipboardMonitor {
     }
 
     private func captureClipboard(_ pb: NSPasteboard) {
-        // 1. Image
-        if let image = NSImage(pasteboard: pb), let data = image.tiffRepresentation {
-            AppLogger.shared.log("Captured image (\(data.count) bytes)")
-            ClipboardHistory.shared.add(ClipItem(
-                id: UUID(), type: .image,
-                stringValue: nil, imageData: data, timestamp: Date()
-            ))
-            return
-        }
-
-        // 2. File URL(s) — a multi-file copy puts several items on the pasteboard.
-        //    pb.string(forType:) returns only the first, so read every item and
-        //    store them newline-joined (file URLs are percent-encoded, so a newline
-        //    separator is unambiguous).
+        // 1. File URL(s) — checked before image because NSImage(pasteboard:) will
+        //    resolve copied image *files* into images, hiding them as file copies.
+        //    A multi-file copy puts several items on the pasteboard; pb.string(forType:)
+        //    returns only the first, so read every item and store them newline-joined
+        //    (file URLs are percent-encoded, so a newline separator is unambiguous).
         let fileURLs = (pb.pasteboardItems ?? []).compactMap { item -> String? in
             guard let s = item.string(forType: .fileURL), !s.isEmpty else { return nil }
             return s
@@ -88,18 +79,27 @@ final class ClipboardMonitor {
             return
         }
 
+        // 2. Image
+        if let image = NSImage(pasteboard: pb), let data = image.tiffRepresentation {
+            AppLogger.shared.log("Captured image (\(data.count) bytes)")
+            ClipboardHistory.shared.add(ClipItem(
+                id: UUID(), type: .image,
+                stringValue: nil, imageData: data, timestamp: Date()
+            ))
+            return
+        }
+
         // 3. Plain text — always preferred over rich formats for clean display
         if let str = pb.string(forType: .string), !str.isEmpty {
             var richData: Data? = nil
             var richFormat: ClipType? = nil
-            if Preferences.shared.preserveFormatting {
-                if let rtf = pb.data(forType: .rtf) {
-                    richData = rtf
-                    richFormat = .rtf
-                } else if let html = pb.data(forType: .html) {
-                    richData = html
-                    richFormat = .html
-                }
+            // Always capture rich formatting; the match-style modifier strips it on paste.
+            if let rtf = pb.data(forType: .rtf) {
+                richData = rtf
+                richFormat = .rtf
+            } else if let html = pb.data(forType: .html) {
+                richData = html
+                richFormat = .html
             }
             AppLogger.shared.log("Captured text (\(str.count) chars\(richFormat != nil ? ", with \(richFormat!) formatting" : ""))")
             ClipboardHistory.shared.add(ClipItem(

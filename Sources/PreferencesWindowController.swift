@@ -139,11 +139,6 @@ private struct PreferencesView: View {
                         .controlSize(.small)
                 }
 
-                Toggle("Preserve formatting when pasting", isOn: $prefs.preserveFormatting)
-                Text("When enabled, copied text keeps its original formatting (bold, links, colors, etc.) when pasted. When disabled, everything is pasted as plain text.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-
                 Button("Clear History…") { showClearHistoryConfirm = true }
                     .buttonStyle(.bordered)
             }

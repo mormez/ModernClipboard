@@ -24,7 +24,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         _ = UpdaterManager.shared
 
         let p = Preferences.shared
-        AppLogger.shared.log("Settings — maxItems: \(p.maxHistoryItems), menuStyle: \(p.historyMenuStyle), sortOrder: \(p.historySortOrder), preserveFormatting: \(p.preserveFormatting), matchStyleModifier: \(p.matchStyleModifier), launchAtLogin: \(p.launchAtLogin), itemsPanelWidth: \(p.itemsPanelWidth), previewLines: \(p.previewLines), excludedApps: \(p.excludedBundleIDs.count)")
+        AppLogger.shared.log("Settings — maxItems: \(p.maxHistoryItems), menuStyle: \(p.historyMenuStyle), sortOrder: \(p.historySortOrder), matchStyleModifier: \(p.matchStyleModifier), launchAtLogin: \(p.launchAtLogin), itemsPanelWidth: \(p.itemsPanelWidth), previewLines: \(p.previewLines), excludedApps: \(p.excludedBundleIDs.count)")
 
         menuBarManager = MenuBarManager()
         ClipboardMonitor.shared.start()
