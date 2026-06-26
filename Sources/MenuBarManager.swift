@@ -91,13 +91,12 @@ final class MenuBarManager: NSObject {
                     empty.isEnabled = false
                     sub.addItem(empty)
                 }
-                sub.addItem(.separator())
-                let editSnippets = NSMenuItem(title: "Edit Snippets…", action: #selector(openSnippetsEditor), keyEquivalent: "")
-                editSnippets.target = self
-                sub.addItem(editSnippets)
                 folderItem.submenu = sub
                 menu.addItem(folderItem)
             }
+            let editSnippets = NSMenuItem(title: "  Edit Snippets…", action: #selector(openSnippetsEditor), keyEquivalent: "")
+            editSnippets.target = self
+            menu.addItem(editSnippets)
             menu.addItem(.separator())
         }
 

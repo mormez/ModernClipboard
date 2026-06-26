@@ -72,5 +72,3 @@ Press **⇧⌘S** (Shift-Command-S) anywhere to open your snippets and paste one
 | Open Preferences | **⌘,** | Command-Comma |
 
 Ran into a problem or have an idea? Open **Preferences → Help** to report a bug, request a feature, or export diagnostics.
-
-For the full feature reference, see the [User Manual](USER_MANUAL.md).

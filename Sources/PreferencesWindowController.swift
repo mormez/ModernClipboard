@@ -459,20 +459,12 @@ private struct PreferencesView: View {
                 Text("Documentation")
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.secondary)
-                HStack(spacing: 10) {
-                    DocDownloadButton(
-                        label: "Quick Start Guide",
-                        icon: "arrow.down.doc",
-                        resource: "Modern Clipboard Quick Start v1.0.0",
-                        ext: "pdf"
-                    )
-                    DocDownloadButton(
-                        label: "User Manual",
-                        icon: "arrow.down.doc",
-                        resource: "Modern Clipboard User Manual v1.0.0",
-                        ext: "docx"
-                    )
-                }
+                DocDownloadButton(
+                    label: "Quick Start Guide",
+                    icon: "arrow.down.doc",
+                    resource: "Modern Clipboard Quick Start v1.0.0",
+                    ext: "pdf"
+                )
             }
 
             Spacer()
