@@ -8,6 +8,11 @@ final class ClipboardMonitor {
     var isPaused = false
     private var pauseResumeWorkItem: DispatchWorkItem?
 
+    // nspasteboard.org convention markers. Apps set these to tell clipboard
+    // managers a copied item is sensitive (passwords) or shouldn't be recorded.
+    private static let concealedType = NSPasteboard.PasteboardType("org.nspasteboard.ConcealedType")
+    private static let transientType = NSPasteboard.PasteboardType("org.nspasteboard.TransientType")
+
     private init() {}
 
     func start() {
@@ -43,6 +48,14 @@ final class ClipboardMonitor {
 
         if let excluded = NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
            Preferences.shared.excludedBundleIDs.contains(excluded) { return }
+
+        // Skip items apps flag as concealed (e.g. passwords) or transient, so
+        // sensitive content is never written to the on-disk history.
+        if let types = pb.types,
+           types.contains(Self.concealedType) || types.contains(Self.transientType) {
+            AppLogger.shared.log("Skipped clipboard item flagged concealed/transient")
+            return
+        }
 
         captureClipboard(pb)
     }
