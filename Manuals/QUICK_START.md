@@ -44,7 +44,7 @@ Press **⇧⌘V** (Shift-Command-V) from anywhere to open the history popup.
 
 The popup closes and pastes into whatever app you were using.
 
-> **Tip:** Copied formatting (bold, links, colors) is preserved on paste if **Preserve formatting when pasting** is enabled in Preferences. Want it to match the destination's existing style instead? Hold **⌥ Option** (configurable) while pasting from the popup — this pastes plain text that takes on the formatting already in place where you're pasting.
+> **Tip:** Copied formatting (bold, links, colors) is always preserved and pasted back by default. Want it to match the destination's existing style instead? Hold **⌥ Option** (configurable) while pasting from the popup — this pastes plain text that takes on the formatting already in place where you're pasting.
 
 ---
 <!-- page-break -->
