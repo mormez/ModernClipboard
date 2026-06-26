@@ -46,8 +46,9 @@ final class PasteService {
         case .image:
             if let d = item.imageData { pb.setData(d, forType: .tiff) }
         case .fileURL:
-            if let s = item.stringValue, let url = URL(string: s) {
-                pb.writeObjects([url as NSURL])
+            if let s = item.stringValue {
+                let urls = s.split(separator: "\n").compactMap { URL(string: String($0)) }
+                if !urls.isEmpty { pb.writeObjects(urls.map { $0 as NSURL }) }
             }
         }
     }

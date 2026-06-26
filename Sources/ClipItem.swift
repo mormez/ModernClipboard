@@ -28,7 +28,13 @@ struct ClipItem: Identifiable, Codable, Equatable {
         case .image:
             return "[Image]"
         case .fileURL:
-            return stringValue.map { URL(string: $0)?.lastPathComponent ?? $0 } ?? "[File]"
+            guard let s = stringValue, !s.isEmpty else { return "[File]" }
+            let names = s.split(separator: "\n").map { URL(string: String($0))?.lastPathComponent ?? String($0) }
+            switch names.count {
+            case 0:  return "[File]"
+            case 1:  return names[0]
+            default: return "\(names[0]) + \(names.count - 1) more"
+            }
         }
     }
 

@@ -71,12 +71,19 @@ final class ClipboardMonitor {
             return
         }
 
-        // 2. File URL
-        if let str = pb.string(forType: .fileURL), !str.isEmpty {
-            AppLogger.shared.log("Captured file URL")
+        // 2. File URL(s) — a multi-file copy puts several items on the pasteboard.
+        //    pb.string(forType:) returns only the first, so read every item and
+        //    store them newline-joined (file URLs are percent-encoded, so a newline
+        //    separator is unambiguous).
+        let fileURLs = (pb.pasteboardItems ?? []).compactMap { item -> String? in
+            guard let s = item.string(forType: .fileURL), !s.isEmpty else { return nil }
+            return s
+        }
+        if !fileURLs.isEmpty {
+            AppLogger.shared.log("Captured \(fileURLs.count) file URL(s)")
             ClipboardHistory.shared.add(ClipItem(
                 id: UUID(), type: .fileURL,
-                stringValue: str, imageData: nil, timestamp: Date()
+                stringValue: fileURLs.joined(separator: "\n"), imageData: nil, timestamp: Date()
             ))
             return
         }
