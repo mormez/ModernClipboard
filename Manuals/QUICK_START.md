@@ -62,6 +62,16 @@ Press **⇧⌘S** (Shift-Command-S) anywhere to open your snippets and paste one
 
 ---
 
+## Bonus: Exclude Sensitive Apps
+
+Keep clipboard contents from password managers and other sensitive apps out of your history entirely.
+
+1. Open **Preferences → Exclude Apps**.
+2. Click **+** and choose an app, or click **Auto-exclude known password managers** to add common ones (1Password, Bitwarden, LastPass, and more) automatically.
+3. Anything copied in an excluded app never enters the clipboard history.
+
+---
+
 ## That's it!
 
 | Action | Shortcut | |
