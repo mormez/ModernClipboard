@@ -107,14 +107,13 @@ final class ClipboardMonitor {
             }
         }
 
-        // 5. HTML — extract plain text so no markup code is shown
+        // 5. HTML — extract plain text. We deliberately AVOID the NSAttributedString
+        //    HTML importer here: it is WebKit-backed and can synchronously load remote
+        //    resources referenced inside untrusted clipboard markup. Plain-text
+        //    extraction only needs a tag strip + entity decode, which has no network surface.
         if let data = pb.data(forType: .html),
-           let attrStr = try? NSAttributedString(
-               data: data,
-               options: [.documentType: NSAttributedString.DocumentType.html],
-               documentAttributes: nil
-           ) {
-            let plain = attrStr.string.trimmingCharacters(in: .whitespacesAndNewlines)
+           let html = String(data: data, encoding: .utf8) ?? String(data: data, encoding: .isoLatin1) {
+            let plain = plainText(fromHTML: html).trimmingCharacters(in: .whitespacesAndNewlines)
             if !plain.isEmpty {
                 ClipboardHistory.shared.add(ClipItem(
                     id: UUID(), type: .string,
@@ -122,5 +121,46 @@ final class ClipboardMonitor {
                 ))
             }
         }
+    }
+
+    /// Converts HTML markup to readable plain text without invoking the WebKit-backed
+    /// NSAttributedString importer (which can fetch remote resources from untrusted markup).
+    private func plainText(fromHTML html: String) -> String {
+        var s = html
+
+        // Drop script/style blocks wholesale so their source doesn't leak into the text.
+        s = s.replacingOccurrences(
+            of: "(?is)<(script|style)[^>]*>.*?</\\1>", with: "", options: .regularExpression)
+
+        // Preserve line structure for common break/block elements.
+        s = s.replacingOccurrences(of: "(?i)<br\\s*/?>", with: "\n", options: .regularExpression)
+        s = s.replacingOccurrences(
+            of: "(?i)</(p|div|li|tr|h[1-6]|blockquote)>", with: "\n", options: .regularExpression)
+
+        // Strip all remaining tags.
+        s = s.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
+
+        // Decode the most common named entities.
+        let named = ["&amp;": "&", "&lt;": "<", "&gt;": ">", "&quot;": "\"",
+                     "&apos;": "'", "&#39;": "'", "&nbsp;": " "]
+        for (entity, char) in named { s = s.replacingOccurrences(of: entity, with: char) }
+
+        // Decode numeric entities (&#1234; and &#x1F600;).
+        return decodeNumericEntities(in: s)
+    }
+
+    private func decodeNumericEntities(in string: String) -> String {
+        guard let regex = try? NSRegularExpression(pattern: "&#(x?)([0-9A-Fa-f]+);") else { return string }
+        let result = NSMutableString(string: string)
+        let matches = regex.matches(in: string, range: NSRange(location: 0, length: result.length))
+        // Replace from the end so earlier match ranges stay valid as we mutate.
+        for match in matches.reversed() {
+            let isHex = result.substring(with: match.range(at: 1)).lowercased() == "x"
+            let digits = result.substring(with: match.range(at: 2))
+            guard let code = UInt32(digits, radix: isHex ? 16 : 10),
+                  let scalar = Unicode.Scalar(code) else { continue }
+            result.replaceCharacters(in: match.range(at: 0), with: String(scalar))
+        }
+        return result as String
     }
 }
