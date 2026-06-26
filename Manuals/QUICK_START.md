@@ -47,6 +47,7 @@ The popup closes and pastes into whatever app you were using.
 > **Tip:** Copied formatting (bold, links, colors) is preserved on paste if **Preserve formatting when pasting** is enabled in Preferences. Want it to match the destination's existing style instead? Hold **⌥ Option** (configurable) while pasting from the popup — this pastes plain text that takes on the formatting already in place where you're pasting.
 
 ---
+<!-- page-break -->
 
 ## Step 5 — Create a Snippet
 
@@ -62,7 +63,7 @@ Press **⇧⌘S** (Shift-Command-S) anywhere to open your snippets and paste one
 
 ---
 
-## Bonus: Exclude Sensitive Apps
+## Part 6: Exclude Sensitive Apps
 
 Keep clipboard contents from password managers and other sensitive apps out of your history entirely.
 
