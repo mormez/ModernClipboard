@@ -123,7 +123,6 @@ COMMON_PROJECT = """
 
 COMMON_TARGET = f"""
 \t\t\t\tASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-\t\t\t\tCODE_SIGN_ENTITLEMENTS = Sources/ModernClipboard.entitlements;
 \t\t\t\tCODE_SIGN_IDENTITY = "ModernClipy Dev";
 \t\t\t\tCODE_SIGN_STYLE = Manual;
 \t\t\t\tCOMBINE_HIDPI_IMAGES = YES;
@@ -290,6 +289,7 @@ pbx = f"""// !$*UTF8*$!
 \t\t{CFG_TGT_DBG} /* Debug */ = {{
 \t\t\tisa = XCBuildConfiguration;
 \t\t\tbuildSettings = {{{COMMON_TARGET}
+\t\t\t\tCODE_SIGN_ENTITLEMENTS = Sources/ModernClipboard-Debug.entitlements;
 \t\t\t\tSWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 \t\t\t}};
 \t\t\tname = Debug;
@@ -297,6 +297,7 @@ pbx = f"""// !$*UTF8*$!
 \t\t{CFG_TGT_REL} /* Release */ = {{
 \t\t\tisa = XCBuildConfiguration;
 \t\t\tbuildSettings = {{{COMMON_TARGET}
+\t\t\t\tCODE_SIGN_ENTITLEMENTS = Sources/ModernClipboard.entitlements;
 \t\t\t}};
 \t\t\tname = Release;
 \t\t}};

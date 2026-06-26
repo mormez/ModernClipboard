@@ -251,7 +251,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Sources/ModernClipboard.entitlements;
 				CODE_SIGN_IDENTITY = "ModernClipy Dev";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -265,6 +264,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.modernclipboard.app;
 				PRODUCT_NAME = "Modern Clipboard";
 				SWIFT_VERSION = 5.0;
+				CODE_SIGN_ENTITLEMENTS = Sources/ModernClipboard-Debug.entitlements;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 			};
 			name = Debug;
@@ -273,7 +273,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = Sources/ModernClipboard.entitlements;
 				CODE_SIGN_IDENTITY = "ModernClipy Dev";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -287,6 +286,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.modernclipboard.app;
 				PRODUCT_NAME = "Modern Clipboard";
 				SWIFT_VERSION = 5.0;
+				CODE_SIGN_ENTITLEMENTS = Sources/ModernClipboard.entitlements;
 			};
 			name = Release;
 		};

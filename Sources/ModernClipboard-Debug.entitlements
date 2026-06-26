@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- Debug-only: Xcode's debug-dylib / Previews architecture loads a
+         separately-signed `*.debug.dylib` with a different Team ID, which
+         library validation would otherwise reject at launch. This entitlement
+         is intentionally NOT present in the Release/distribution entitlements
+         (Sources/ModernClipboard.entitlements), so shipped builds stay hardened. -->
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+</dict>
+</plist>
