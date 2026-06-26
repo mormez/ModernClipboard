@@ -137,6 +137,7 @@ final class MenuBarManager: NSObject {
 
     @objc private func pasteHistoryItem(_ sender: NSMenuItem) {
         guard let item = sender.representedObject as? ClipItem else { return }
+        guard !item.isPlaceholder else { return }   // concealed / excluded rows hold no value to paste
         let matchStyle = NSEvent.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag)
         PasteService.shared.paste(item: item, matchStyle: matchStyle)
     }

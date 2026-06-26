@@ -8,6 +8,8 @@ enum ClipType: String, Codable {
     case html
     case image
     case fileURL
+    case concealed   // sensitive item (e.g. password) — stored as a redacted placeholder, never the value
+    case excluded    // copied from a user-excluded app — stored as a placeholder, never the value
 }
 
 struct ClipItem: Identifiable, Codable, Equatable {
@@ -28,6 +30,10 @@ struct ClipItem: Identifiable, Codable, Equatable {
             return text.isEmpty ? "(empty)" : String(text.prefix(100))
         case .image:
             return "[Image]"
+        case .concealed:
+            return "[Concealed] - Please use ⌘V to paste"
+        case .excluded:
+            return "[Excluded] - Please use ⌘V to paste"
         case .fileURL:
             guard let s = stringValue, !s.isEmpty else { return "[File]" }
             let urls = s.split(separator: "\n").compactMap { URL(string: String($0)) }
@@ -43,6 +49,19 @@ struct ClipItem: Identifiable, Codable, Equatable {
     var thumbnailImage: NSImage? {
         guard type == .image, let data = imageData else { return nil }
         return NSImage(data: data)
+    }
+
+    /// Placeholder rows (concealed / excluded) hold no value and must never paste.
+    var isPlaceholder: Bool { type == .concealed || type == .excluded }
+
+    /// SF Symbol used for this item in the popup list.
+    var listIconName: String {
+        switch type {
+        case .concealed: return "lock.fill"
+        case .excluded:  return "eye.slash"
+        case .fileURL:   return "folder"
+        default:         return "doc.text"
+        }
     }
 
     static func == (lhs: ClipItem, rhs: ClipItem) -> Bool {

@@ -266,7 +266,7 @@ final class ClipboardPopupController {
                     title: folder.label,
                     rows: folder.items.enumerated().map { i, item in
                         ItemRow(number: folder.startNumber + i, title: item.displayTitle,
-                                icon: item.type == .fileURL ? "folder" : "doc.text",
+                                icon: item.listIconName,
                                 thumbnailImage: item.thumbnailImage)
                     },
                     onSelectRow: { [weak self] i in
@@ -384,6 +384,8 @@ final class ClipboardPopupController {
     // MARK: - Paste
 
     private func pasteItem(_ item: ClipItem, matchStyle: Bool = false) {
+        // Placeholder rows (concealed / excluded) hold no value — just close and let ⌘V work.
+        guard !item.isPlaceholder else { hide(); return }
         let app = previousApp
         ClipboardHistory.shared.markUsed(id: item.id)
         hide()
@@ -782,7 +784,7 @@ struct PopupItemRow: View {
             Image(nsImage: img.scaled(to: NSSize(width: 18, height: 18)))
                 .resizable().scaledToFit().clipShape(RoundedRectangle(cornerRadius: 3))
         } else {
-            Image(systemName: item.type == .fileURL ? "folder" : "doc.text")
+            Image(systemName: item.listIconName)
                 .font(.system(size: 11)).foregroundStyle(.secondary)
         }
     }

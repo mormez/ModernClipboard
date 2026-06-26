@@ -25,6 +25,9 @@ final class PasteService {
     // Used by ClipboardPopupController which handles its own activation timing.
     // `matchStyle: true` strips any preserved formatting and pastes plain text only.
     func setClipboard(item: ClipItem, matchStyle: Bool = false) {
+        // Never act on a placeholder (concealed / excluded) — it has no value, and
+        // clearing the pasteboard here would wipe what the user just copied.
+        guard !item.isPlaceholder else { return }
         let pb = NSPasteboard.general
         pb.clearContents()
         switch item.type {
@@ -50,6 +53,8 @@ final class PasteService {
                 let urls = s.split(separator: "\n").compactMap { URL(string: String($0)) }
                 if !urls.isEmpty { pb.writeObjects(urls.map { $0 as NSURL }) }
             }
+        case .concealed, .excluded:
+            break   // unreachable — guarded above; present for switch exhaustiveness
         }
     }
 

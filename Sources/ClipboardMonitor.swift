@@ -46,14 +46,32 @@ final class ClipboardMonitor {
         guard pb.changeCount != lastChangeCount else { return }
         lastChangeCount = pb.changeCount
 
-        if let excluded = NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
-           Preferences.shared.excludedBundleIDs.contains(excluded) { return }
+        if let frontmost = NSWorkspace.shared.frontmostApplication?.bundleIdentifier,
+           Preferences.shared.excludedBundleIDs.contains(frontmost) {
+            AppLogger.shared.log("Excluded-app clipboard item — stored as placeholder")
+            ClipboardHistory.shared.add(ClipItem(
+                id: UUID(), type: .excluded,
+                stringValue: nil, imageData: nil, timestamp: Date()
+            ))
+            return
+        }
 
-        // Skip items apps flag as concealed (e.g. passwords) or transient, so
-        // sensitive content is never written to the on-disk history.
-        if let types = pb.types,
-           types.contains(Self.concealedType) || types.contains(Self.transientType) {
-            AppLogger.shared.log("Skipped clipboard item flagged concealed/transient")
+        // Items apps flag as concealed (e.g. passwords): store a redacted placeholder
+        // instead of the value, so the user sees something happened but the secret is
+        // never written to the on-disk history. The live clipboard is untouched, so ⌘V
+        // still pastes it normally.
+        if let types = pb.types, types.contains(Self.concealedType) {
+            AppLogger.shared.log("Concealed clipboard item — stored as placeholder")
+            ClipboardHistory.shared.add(ClipItem(
+                id: UUID(), type: .concealed,
+                stringValue: nil, imageData: nil, timestamp: Date()
+            ))
+            return
+        }
+
+        // Transient items: the owner explicitly asked that they not be recorded at all.
+        if let types = pb.types, types.contains(Self.transientType) {
+            AppLogger.shared.log("Skipped transient clipboard item")
             return
         }
 
