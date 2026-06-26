@@ -456,7 +456,7 @@ Go to **Preferences → General → Clipboard History**, click **Clear History�
 
 ## Contact & Support
 
-**Developer:** Mor Mezrich — Myrrh Labs  
+**Developer:** Mor Mezrich  
 **Email:** modern.clipboard@gmail.com  
 **GitHub:** https://github.com/mormez/ModernClipboard
 
