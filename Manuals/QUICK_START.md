@@ -53,11 +53,10 @@ The popup closes and pastes into whatever app you were using.
 Snippets are text blocks you save once and reuse forever — great for signatures, templates, or common replies.
 
 1. Press **⇧⌘S** (Shift-Command-S) to open the snippets popup.
-2. Open the **My Snippets** folder.
-3. Click **Edit Snippets…** at the bottom of the panel to open the snippet editor.
-4. Click **+** in the left column to create a folder.
-5. Select your folder, then click **+** in the middle column to add a snippet.
-6. Enter a title and your text, then click **Save**.
+2. Click **Edit Snippets…** below the folder list to open the snippet editor.
+3. Click **+** in the left column to create a folder.
+4. Select your folder, then click **+** in the middle column to add a snippet.
+5. Enter a title and your text, then click **Save**.
 
 Press **⇧⌘S** (Shift-Command-S) anywhere to open your snippets and paste one.
 
