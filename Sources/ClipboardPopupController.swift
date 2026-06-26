@@ -600,7 +600,6 @@ struct FolderPanelView: View {
                         onSelect: { onSelectSnippetFolder(si) },
                         onHover: { if $0 { state.selectedRowIndex = row } }
                     )
-                    if si < snippetFolders.count - 1 { Divider().padding(.leading, 10) }
                 }
 
                 Divider()
@@ -1079,7 +1078,6 @@ struct SnippetsFolderPanelView: View {
                             onSelect: { onSelectFolder(fi) },
                             onHover: { if $0 { onHoverFolder(fi) } }
                         )
-                        if fi < folders.count - 1 { Divider().padding(.leading, 10) }
                     }
                 }
             }

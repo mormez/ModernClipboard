@@ -78,7 +78,7 @@ final class MenuBarManager: NSObject {
         if !folders.isEmpty {
             addHeader("Snippets", to: menu)
             for folder in folders {
-                let folderItem = NSMenuItem(title: "  \(folder.name)", action: nil, keyEquivalent: "")
+                let folderItem = NSMenuItem(title: "    \(folder.name)", action: nil, keyEquivalent: "")
                 let sub = NSMenu()
                 for snippet in folder.snippets {
                     let si = NSMenuItem(title: snippet.title, action: #selector(pasteSnippet(_:)), keyEquivalent: "")
