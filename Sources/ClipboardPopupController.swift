@@ -93,10 +93,6 @@ final class ClipboardPopupController {
         previousApp = NSWorkspace.shared.frontmostApplication
         state.items = ClipboardHistory.shared.items
         state.hoverEnabled = false
-        guard !state.items.isEmpty else {
-            AppLogger.shared.log("Clipboard popup requested but history is empty — nothing shown")
-            return
-        }
 
         currentStyle = Preferences.shared.historyMenuStyle
         let sortedItems: [ClipItem]
@@ -223,6 +219,7 @@ final class ClipboardPopupController {
         var h: CGFloat = headerH
         h += CGFloat(flatCount)  * itemRowH
         h += CGFloat(clipCount)  * folderRowH
+        if flatCount == 0 && clipCount == 0 { h += folderRowH }  // "history is empty" row
         if snippetCount > 0 {
             h += sectionHeaderH  // "Snippets" label
             h += CGFloat(snippetCount) * folderRowH
@@ -458,6 +455,11 @@ final class ClipboardPopupController {
     }
 
     private func handleFolderLevel(_ event: NSEvent) -> NSEvent? {
+        // Nothing selectable (empty history, no snippets): only Esc does anything.
+        guard totalRows > 0 else {
+            if event.keyCode == 53 { hide() }
+            return nil
+        }
         switch event.keyCode {
         case 125:
             state.selectedRowIndex = min(state.selectedRowIndex + 1, totalRows - 1); return nil
@@ -575,6 +577,18 @@ struct FolderPanelView: View {
                     onHover: { if $0 { state.selectedRowIndex = row } }
                 )
                 if fi < clipFolders.count - 1 { Divider().padding(.leading, 10) }
+            }
+
+            // ── Empty-history message ──
+            if flatItems.isEmpty && clipFolders.isEmpty {
+                HStack {
+                    Text("Clipboard history is empty")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .frame(maxWidth: .infinity, minHeight: 40)
             }
 
             // ── Snippets section ──
