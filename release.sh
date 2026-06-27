@@ -99,10 +99,10 @@ create-dmg \
   --volname "Modern Clipboard" \
   --background "packaging/dmg-background.tiff" \
   --window-pos 200 120 \
-  --window-size 600 400 \
+  --window-size 600 460 \
   --icon-size 128 \
-  --icon "Modern Clipboard.app" 150 200 \
-  --app-drop-link 450 200 \
+  --icon "Modern Clipboard.app" 150 205 \
+  --app-drop-link 450 205 \
   --no-internet-enable \
   "$DMG_PATH" \
   "$STAGE"

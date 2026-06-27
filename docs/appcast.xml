@@ -10,7 +10,7 @@
             <sparkle:shortVersionString>1.0.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/mormez/ModernClipboard/releases/download/v1.0.0/ModernClipboard.dmg" length="1603716" type="application/octet-stream" sparkle:edSignature="Q1nOjo93vi2RupToikSU8AGJq/AoZVssygsoT5DOptUe7ulV74TxTP9zXhbeh9cUPa/OL0xMgebaUdqaH8xVCg=="/>
+            <enclosure url="https://github.com/mormez/ModernClipboard/releases/download/v1.0.0/ModernClipboard.dmg" length="1602875" type="application/octet-stream" sparkle:edSignature="Y7uhyMs3J383MYzKBvBx2ku7WyzUzDo5OGMkkVxpT23scD+Qiw5RmXYvh8sk3K2WDLKOZQtpRIUO9SeYb9oqAQ=="/>
         </item>
     </channel>
 </rss>
