@@ -75,18 +75,37 @@ xcrun stapler staple "$APP"
 xcrun stapler validate "$APP"
 echo "✓ App notarized and stapled"
 
-# --- Build the drag-to-Applications .dmg ---------------------------------
+# --- Build the styled drag-to-Applications .dmg --------------------------
+# Uses create-dmg (brew install create-dmg) for a polished window: HiDPI
+# background image (packaging/dmg-background.tiff, an arrow pointing app ->
+# Applications), positioned icons, larger icon size, and the Applications drop
+# link. Source folder holds ONLY the app — create-dmg adds the Applications
+# shortcut via --app-drop-link. To tweak the background, edit and re-run
+# packaging/make_dmg_background.py, then rebuild the tiff with tiffutil.
 RELEASE_DIR="releases/v$VERSION"
 mkdir -p "$RELEASE_DIR"
 DMG_PATH="$RELEASE_DIR/ModernClipboard.dmg"
 
+if ! command -v create-dmg >/dev/null 2>&1; then
+  echo "create-dmg not found. Install it with: brew install create-dmg"
+  exit 1
+fi
+
 STAGE="/tmp/mc_dmg_stage_$VERSION"
 rm -rf "$STAGE"; mkdir -p "$STAGE"
 cp -R "$APP" "$STAGE/"
-ln -s /Applications "$STAGE/Applications"
 rm -f "$DMG_PATH"
-hdiutil create -volname "Modern Clipboard" -srcfolder "$STAGE" \
-  -ov -format UDZO "$DMG_PATH"
+create-dmg \
+  --volname "Modern Clipboard" \
+  --background "packaging/dmg-background.tiff" \
+  --window-pos 200 120 \
+  --window-size 600 400 \
+  --icon-size 128 \
+  --icon "Modern Clipboard.app" 150 200 \
+  --app-drop-link 450 200 \
+  --no-internet-enable \
+  "$DMG_PATH" \
+  "$STAGE"
 
 # --- Sign + notarize + staple the .dmg -----------------------------------
 codesign -f --timestamp -s "$IDENTITY" "$DMG_PATH"
