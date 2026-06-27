@@ -35,7 +35,7 @@ Sources/
   Preferences.swift / PreferencesWindowController.swift
 Manuals/
   QUICK_START.md
-  Modern Clipboard Quick Start.docx
+  Modern Clipboard Quick Start v1.0.1.pdf   ← bundled into the app + distributed
 gen_project.py   ← regenerates Modern Clipboard.xcodeproj when adding/removing source files
 build.sh         ← build + auto-relaunch (see below)
 ```
