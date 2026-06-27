@@ -41,6 +41,14 @@ private struct PreferencesView: View {
     @State private var selectedTab: Tab = .general
     @State private var showClearHistoryConfirm = false
 
+    // Accessibility trust is re-checked live: AXIsProcessTrustedWithOptions reflects
+    // the current process, but reading it once when the window draws leaves the label
+    // stale if the user grants permission afterward (or the grant settles after a
+    // re-signed build). Poll it and refresh on app activation so it updates without
+    // needing to restart the app.
+    @State private var accessibilityTrusted = AXIsProcessTrustedWithOptions(nil)
+    private let accessibilityPoll = Timer.publish(every: 1.5, on: .main, in: .common).autoconnect()
+
     private enum Tab: Hashable { case general, exclude, help, about }
 
     private let historyOptions   = stride(from: 5, through: 50, by: 5).map { $0 }
@@ -64,16 +72,23 @@ private struct PreferencesView: View {
         } message: {
             Text("This will permanently delete all clipboard history. This action cannot be undone.")
         }
+        .onReceive(accessibilityPoll) { _ in
+            let trusted = AXIsProcessTrustedWithOptions(nil)
+            if trusted != accessibilityTrusted { accessibilityTrusted = trusted }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            accessibilityTrusted = AXIsProcessTrustedWithOptions(nil)
+        }
     }
 
     private var generalTab: some View {
         Form {
             Section("Permissions") {
                 HStack {
-                    Image(systemName: AXIsProcessTrustedWithOptions(nil) ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
-                        .foregroundStyle(AXIsProcessTrustedWithOptions(nil) ? .green : .orange)
-                    Text(AXIsProcessTrustedWithOptions(nil) ? "Accessibility granted" : "Accessibility not granted")
-                        .foregroundStyle(AXIsProcessTrustedWithOptions(nil) ? Color.primary : Color.orange)
+                    Image(systemName: accessibilityTrusted ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
+                        .foregroundStyle(accessibilityTrusted ? .green : .orange)
+                    Text(accessibilityTrusted ? "Accessibility granted" : "Accessibility not granted")
+                        .foregroundStyle(accessibilityTrusted ? Color.primary : Color.orange)
                     Spacer()
                     Button("Open System Settings") {
                         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
@@ -457,7 +472,7 @@ private struct PreferencesView: View {
                 DocDownloadButton(
                     label: "Quick Start Guide",
                     icon: "arrow.down.doc",
-                    resource: "Modern Clipboard Quick Start v1.0.0",
+                    resource: "Modern Clipboard Quick Start v1.0.1",
                     ext: "pdf"
                 )
             }
