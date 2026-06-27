@@ -1,11 +1,20 @@
 #!/bin/bash
 set -e
 
-# Builds a Release configuration build, zips it, signs it for Sparkle,
-# and prints the <item> block to add to docs/appcast.xml.
+# Full Developer ID release pipeline for Modern Clipboard.
+#
+# Builds Release -> signs every nested Sparkle component (hardened runtime) ->
+# notarizes + staples the .app -> builds a drag-to-Applications .dmg ->
+# signs + notarizes + staples the .dmg -> regenerates docs/appcast.xml
+# (signed with the Sparkle EdDSA key) so existing users auto-update.
 #
 # Usage: ./release.sh <marketing-version> <build-number>
 # Example: ./release.sh 1.1.0 2
+#
+# Prereqs (one-time, already done):
+#   - Developer ID Application cert in the login keychain
+#   - notarytool profile "ModernClipboard-notary" stored in the keychain
+#   - Sparkle EdDSA private key in the login keychain (public key in Info.plist)
 
 VERSION=$1
 BUILD=$2
@@ -16,10 +25,15 @@ if [ -z "$VERSION" ] || [ -z "$BUILD" ]; then
   exit 1
 fi
 
-# Bump version numbers
+IDENTITY="Developer ID Application: MOR MEZRICH (XW9JVVTBT8)"
+NOTARY_PROFILE="ModernClipboard-notary"
+GITHUB_REPO="https://github.com/mormez/ModernClipboard"
+
+# --- Bump version numbers -------------------------------------------------
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Sources/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD" Sources/Info.plist
 
+# --- Build Release --------------------------------------------------------
 echo "Building Modern Clipboard $VERSION ($BUILD) — Release configuration..."
 xcodebuild \
   -project "Modern Clipboard.xcodeproj" \
@@ -34,45 +48,75 @@ if [ -z "$APP" ]; then
   exit 1
 fi
 
+# --- Sign every nested Sparkle component, inside-out ----------------------
+# Xcode signs the framework shell but not Sparkle's nested executables;
+# notarization rejects the build unless each one is signed with hardened runtime.
+echo "Signing nested Sparkle components..."
+SPARKLE="$APP/Contents/Frameworks/Sparkle.framework/Versions/B"
+sign() { codesign -f -o runtime --timestamp -s "$IDENTITY" "$1"; }
+sign "$SPARKLE/XPCServices/Downloader.xpc"
+sign "$SPARKLE/XPCServices/Installer.xpc"
+sign "$SPARKLE/Updater.app/Contents/MacOS/Updater"
+sign "$SPARKLE/Updater.app"
+sign "$SPARKLE/Autoupdate"
+sign "$APP/Contents/Frameworks/Sparkle.framework"
+codesign -f -o runtime --timestamp \
+  --entitlements Sources/ModernClipboard.entitlements -s "$IDENTITY" "$APP"
+codesign --verify --deep --strict "$APP"
+echo "✓ Signed and verified"
+
+# --- Notarize + staple the .app ------------------------------------------
+echo "Notarizing the app (this can take a few minutes)..."
+APP_ZIP="/tmp/ModernClipboard-app-$VERSION.zip"
+rm -f "$APP_ZIP"
+ditto -c -k --keepParent "$APP" "$APP_ZIP"
+xcrun notarytool submit "$APP_ZIP" --keychain-profile "$NOTARY_PROFILE" --wait
+xcrun stapler staple "$APP"
+xcrun stapler validate "$APP"
+echo "✓ App notarized and stapled"
+
+# --- Build the drag-to-Applications .dmg ---------------------------------
 RELEASE_DIR="releases/v$VERSION"
 mkdir -p "$RELEASE_DIR"
-ZIP_NAME="ModernClipboard-$VERSION.zip"
-ZIP_PATH="$RELEASE_DIR/$ZIP_NAME"
+DMG_PATH="$RELEASE_DIR/ModernClipboard.dmg"
 
-rm -f "$ZIP_PATH"
-ditto -c -k --keepParent "$APP" "$ZIP_PATH"
-echo ""
-echo "✓ Built and zipped: $ZIP_PATH"
+STAGE="/tmp/mc_dmg_stage_$VERSION"
+rm -rf "$STAGE"; mkdir -p "$STAGE"
+cp -R "$APP" "$STAGE/"
+ln -s /Applications "$STAGE/Applications"
+rm -f "$DMG_PATH"
+hdiutil create -volname "Modern Clipboard" -srcfolder "$STAGE" \
+  -ov -format UDZO "$DMG_PATH"
 
-# Sign with Sparkle EdDSA key (from login keychain)
-SIGN_UPDATE=$(find build/DerivedData/SourcePackages/artifacts/sparkle -name "sign_update" -path "*/bin/*" | head -1)
-if [ -z "$SIGN_UPDATE" ]; then
-  echo "Could not find sign_update tool. Run ./build.sh once first to fetch Sparkle dependencies."
+# --- Sign + notarize + staple the .dmg -----------------------------------
+codesign -f --timestamp -s "$IDENTITY" "$DMG_PATH"
+echo "Notarizing the dmg (this can take a few minutes)..."
+xcrun notarytool submit "$DMG_PATH" --keychain-profile "$NOTARY_PROFILE" --wait
+xcrun stapler staple "$DMG_PATH"
+xcrun stapler validate "$DMG_PATH"
+echo "✓ DMG built, notarized, and stapled: $DMG_PATH"
+
+# --- Regenerate the appcast (signs the dmg with the Sparkle key) ----------
+GEN=$(find build/ReleaseDerivedData -name "generate_appcast" -path "*sparkle*" | head -1)
+if [ -z "$GEN" ]; then
+  echo "Could not find generate_appcast. Run ./build.sh once to fetch Sparkle."
   exit 1
 fi
-
-ENCLOSURE_ATTRS=$("$SIGN_UPDATE" "$ZIP_PATH")
+"$GEN" \
+  --download-url-prefix "$GITHUB_REPO/releases/download/v$VERSION/" \
+  --link "$GITHUB_REPO" \
+  "$RELEASE_DIR/"
+cp "$RELEASE_DIR/appcast.xml" docs/appcast.xml
+echo "✓ docs/appcast.xml regenerated"
 
 echo ""
 echo "==========================================================="
-echo "1. Create a GitHub Release tagged v$VERSION:"
-echo "   https://github.com/mormez/ModernClipboard/releases/new"
-echo "   and upload: $ZIP_PATH"
+echo "Release $VERSION ($BUILD) is ready. To publish:"
 echo ""
-echo "2. Add this <item> inside <channel> in docs/appcast.xml:"
+echo "1. Create a GitHub Release tagged v$VERSION and upload:"
+echo "   $DMG_PATH"
+echo "   $GITHUB_REPO/releases/new"
 echo ""
-cat <<EOF
-    <item>
-      <title>Version $VERSION</title>
-      <pubDate>$(date -R)</pubDate>
-      <sparkle:version>$BUILD</sparkle:version>
-      <sparkle:shortVersionString>$VERSION</sparkle:shortVersionString>
-      <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-      <enclosure url="https://github.com/mormez/ModernClipboard/releases/download/v$VERSION/$ZIP_NAME"
-                 $ENCLOSURE_ATTRS
-                 type="application/octet-stream"/>
-    </item>
-EOF
-echo ""
-echo "3. Commit and push docs/appcast.xml"
+echo "2. Commit and push docs/appcast.xml (GitHub Pages serves the feed)."
+echo "   Existing users will be offered the update automatically."
 echo "==========================================================="
