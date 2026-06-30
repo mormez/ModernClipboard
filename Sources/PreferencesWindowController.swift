@@ -89,8 +89,13 @@ private struct PreferencesView: View {
                         .foregroundStyle(accessibilityTrusted ? .green : .orange)
                     Text(accessibilityTrusted ? "Accessibility granted" : "Accessibility not granted")
                         .foregroundStyle(accessibilityTrusted ? Color.primary : Color.orange)
+                    if !accessibilityTrusted {
+                        Image(systemName: "questionmark.circle")
+                            .foregroundStyle(.secondary)
+                            .help("Modern Clipboard needs Accessibility access to paste items for you. macOS requires you to turn this on yourself — it can't be enabled automatically. Click \"Open Accessibility Settings,\" then switch on Modern Clipboard in the list.")
+                    }
                     Spacer()
-                    Button("Open System Settings") {
+                    Button("Open Accessibility Settings") {
                         NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
                     }
                     .buttonStyle(.bordered)
