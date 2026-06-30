@@ -53,6 +53,10 @@ final class ClipboardPopupController {
     private var currentFolders: [PopupFolder] = []
     private var currentFlatItems: [ClipItem] = []
     private var currentStyle: HistoryMenuStyle = .alwaysGrouped
+    /// True while the showing item pane is the first folder we auto-expanded on
+    /// show(), with no user navigation since. Lets Esc dismiss the whole popup
+    /// (treating that list as the root) instead of collapsing to the folder list.
+    private var firstFolderAutoOpened = false
 
     private let folderColW: CGFloat     = 200
     private var itemColW: CGFloat       { CGFloat(Preferences.shared.itemsPanelWidth) }
@@ -109,6 +113,7 @@ final class ClipboardPopupController {
         state.selectedRowIndex = 0
         state.expandedPane     = nil
         state.selectedItemIndex = 0
+        firstFolderAutoOpened   = false
 
         buildFolderPanel()
         sizeFolderPanel()
@@ -142,6 +147,7 @@ final class ClipboardPopupController {
         // items are already shown inline, so there is nothing to open.
         if Preferences.shared.openFirstFolderOnShow, flatCount == 0, !currentFolders.isEmpty {
             openClipFolder(0)
+            firstFolderAutoOpened = true   // set after openClipFolder, which clears it
         }
     }
 
@@ -257,6 +263,7 @@ final class ClipboardPopupController {
 
     private func openClipFolder(_ fi: Int) {
         guard fi < currentFolders.count else { return }
+        firstFolderAutoOpened  = false   // any open is treated as user navigation
         state.expandedPane     = .clipboard(folderIndex: fi)
         state.selectedItemIndex = 0
         let folder = currentFolders[fi]
@@ -287,6 +294,7 @@ final class ClipboardPopupController {
 
     private func openSnippetFolder(_ si: Int) {
         guard si < snippetFolders.count else { return }
+        firstFolderAutoOpened  = false
         state.expandedPane     = .snippet(folderIndex: si)
         state.selectedItemIndex = 0
         let folder = snippetFolders[si]
@@ -313,6 +321,7 @@ final class ClipboardPopupController {
     }
 
     private func closePane() {
+        firstFolderAutoOpened = false
         state.expandedPane = nil
         hideItemPanel()
         refreshFolderPanel()
@@ -504,7 +513,13 @@ final class ClipboardPopupController {
         switch event.keyCode {
         case 125: state.selectedItemIndex = min(state.selectedItemIndex + 1, itemCount - 1); return nil
         case 126: state.selectedItemIndex = max(state.selectedItemIndex - 1, 0);             return nil
-        case 123, 53: closePane(); return nil   // ← or Esc
+        case 123:                                // ← back to folder list
+            closePane(); return nil
+        case 53:                                 // Esc
+            // From the untouched auto-opened first folder, treat this list as the
+            // root and dismiss the whole popup; otherwise collapse one level.
+            if firstFolderAutoOpened { hide() } else { closePane() }
+            return nil
         case 36, 76:
             guard state.selectedItemIndex < itemCount else { return nil }
             switch state.expandedPane {
