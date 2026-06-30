@@ -120,6 +120,11 @@ final class Preferences: ObservableObject {
     @Published var matchStyleModifier: MatchStyleModifier {
         didSet { set(matchStyleModifier.rawValue, for: .matchStyleModifier) }
     }
+    /// When the history popup opens, automatically expand the first folder (items 1–10)
+    /// so the items are immediately visible and pasteable. Default on.
+    @Published var openFirstFolderOnShow: Bool {
+        didSet { set(openFirstFolderOnShow, for: .openFirstFolderOnShow) }
+    }
 
     private init() {
         maxHistoryItems  = ud.object(forKey: Key.maxHistoryItems.rawValue) as? Int ?? 20
@@ -134,6 +139,7 @@ final class Preferences: ObservableObject {
         snippetsMenuModifiers = UInt32(ud.object(forKey: Key.snippetsMenuModifiers.rawValue) as? Int ?? (cmdKey | shiftKey))
         historySortOrder = HistorySortOrder(rawValue: ud.integer(forKey: Key.historySortOrder.rawValue)) ?? .dateCreated
         matchStyleModifier = MatchStyleModifier(rawValue: ud.integer(forKey: Key.matchStyleModifier.rawValue)) ?? .option
+        openFirstFolderOnShow = ud.object(forKey: Key.openFirstFolderOnShow.rawValue) as? Bool ?? true
 
         // Migrate from old boolean alwaysGroupInSubfolders if present
         if let old = ud.object(forKey: "alwaysGroupInSubfolders") as? Bool {
@@ -157,6 +163,7 @@ final class Preferences: ObservableObject {
         case maxHistoryItems, mainMenuKeyCode, mainMenuModifiers
         case excludedBundleIDs, launchAtLogin, historyMenuStyle, itemsPanelWidth, previewLines
         case snippetsMenuKeyCode, snippetsMenuModifiers, historySortOrder, matchStyleModifier
+        case openFirstFolderOnShow
     }
 
     private func set(_ value: Any, for key: Key) {

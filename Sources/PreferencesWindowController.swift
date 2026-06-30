@@ -99,6 +99,8 @@ private struct PreferencesView: View {
             }
 
             Section("Clipboard History") {
+                Toggle("Open the first folder when the popup appears", isOn: $prefs.openFirstFolderOnShow)
+
                 Picker("Menu style:", selection: $prefs.historyMenuStyle) {
                     ForEach(HistoryMenuStyle.allCases, id: \.self) { style in
                         Text(style.label).tag(style)

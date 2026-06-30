@@ -135,6 +135,14 @@ final class ClipboardPopupController {
 
         panel?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+
+        // Optionally auto-expand the first folder (items 1–10) so the list is
+        // immediately visible and pasteable. Only when those items live in a
+        // folder (default grouped style) — in flat/hybrid styles the first
+        // items are already shown inline, so there is nothing to open.
+        if Preferences.shared.openFirstFolderOnShow, flatCount == 0, !currentFolders.isEmpty {
+            openClipFolder(0)
+        }
     }
 
     func hide() {
