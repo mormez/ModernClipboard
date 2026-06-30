@@ -51,7 +51,7 @@ private struct PreferencesView: View {
 
     private enum Tab: Hashable { case general, exclude, help, about }
 
-    private let historyOptions   = stride(from: 5, through: 50, by: 5).map { $0 }
+    private let historyOptions   = stride(from: 10, through: 50, by: 10).map { $0 }
     private let widthOptions     = stride(from: 200, through: 600, by: 50).map { $0 }
     private let lineOptions      = [1, 2, 3]
 
@@ -154,7 +154,7 @@ private struct PreferencesView: View {
                         .controlSize(.small)
                 }
 
-                Button("Clear History…") { showClearHistoryConfirm = true }
+                Button("Clear Clipboard History…") { showClearHistoryConfirm = true }
                     .buttonStyle(.bordered)
             }
             Section("Startup") {
