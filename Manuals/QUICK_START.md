@@ -1,6 +1,6 @@
 # Modern Clipboard — Quick Start Guide
 
-**Version 1.0.0**
+**Version 1.1**
 
 Get up and running in under 5 minutes.
 
@@ -19,9 +19,9 @@ Get up and running in under 5 minutes.
 
 Modern Clipboard needs Accessibility permission to paste on your behalf.
 
-When prompted, click **Open System Settings** → find **Modern Clipboard** → toggle it **on**.
+When prompted, click **Open Accessibility Settings** → find **Modern Clipboard** → toggle it **on**.
 
-> Missed the prompt? Open the menu bar icon → **Preferences** → **General** → click **Open System Settings**.
+> Missed the prompt? Open the menu bar icon → **Preferences** → **General** → click **Open Accessibility Settings**.
 
 ---
 
@@ -47,9 +47,15 @@ The popup closes and pastes into whatever app you were using.
 > **Tip:** Copied formatting (bold, links, colors) is always preserved and pasted back by default. Want it to match the destination's existing style instead? Hold **⌥ Option** (configurable) while pasting from the popup — this pastes plain text that takes on the formatting already in place where you're pasting.
 
 ---
+
+## Step 5 — Clear Your History
+
+Want to wipe everything you've copied? Open **Preferences → Clipboard History** and click **Clear Clipboard History…** to remove all saved items at once.
+
+---
 <!-- page-break -->
 
-## Step 5 — Create a Snippet
+## Step 6 — Create a Snippet
 
 Snippets are text blocks you save once and reuse forever — great for signatures, templates, or common replies.
 
@@ -63,7 +69,7 @@ Press **⇧⌘S** (Shift-Command-S) anywhere to open your snippets and paste one
 
 ---
 
-## Part 6: Exclude Sensitive Apps
+## Step 7 — Exclude Sensitive Apps
 
 Keep clipboard contents from password managers and other sensitive apps out of your history entirely.
 
