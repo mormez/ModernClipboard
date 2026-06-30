@@ -23,10 +23,21 @@ for y in range(H):
         px[x, y] = c
 
 d = ImageDraw.Draw(img)
-SF = "/System/Library/Fonts/SFNS.ttf"
+# Render text in Helvetica Neue — a static face Pillow rasterizes crisply.
+# The system variable font (SFNS.ttf) renders with uneven, slightly condensed
+# glyphs through Pillow/FreeType, which looked "wonky" in the installer window.
+FONT_CANDIDATES = [
+    ("/System/Library/Fonts/HelveticaNeue.ttc", 0),          # Helvetica Neue Regular
+    ("/System/Library/Fonts/Helvetica.ttc", 0),
+    ("/System/Library/Fonts/Supplemental/Arial.ttf", 0),
+]
 def font(sz):
-    try: return ImageFont.truetype(SF, sz * S)
-    except: return ImageFont.load_default()
+    for path, idx in FONT_CANDIDATES:
+        try:
+            return ImageFont.truetype(path, sz * S, index=idx)
+        except Exception:
+            continue
+    return ImageFont.load_default()
 
 def center_text(text, cy, fnt, fill):
     bb = d.textbbox((0, 0), text, font=fnt)
