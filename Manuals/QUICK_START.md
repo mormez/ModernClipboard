@@ -6,12 +6,11 @@ Get up and running in under 5 minutes.
 
 ---
 
-## Step 1 — Install
+## Step 1 — The Menu Bar Icon
 
-1. Copy **Modern Clipboard.app** to your `/Applications` folder.
-2. Double-click to launch. A clipboard icon appears in your menu bar.
+Modern Clipboard runs as a menu bar application. After it launches, its icon appears in the menu bar at the top-right of the screen. The app has no Dock icon; all functions are accessed from the menu bar icon and the keyboard shortcuts described in this guide.
 
-> **Note:** Modern Clipboard launches automatically at login by default. To turn this off, go to **Preferences → General** and disable **Launch Modern Clipboard at login**.
+> **Note:** Modern Clipboard is configured to launch automatically at login. To disable this, open **Preferences → General** and turn off **Launch Modern Clipboard at login**.
 
 ---
 
@@ -50,7 +49,7 @@ The popup closes and pastes into whatever app you were using.
 
 ## Step 5 — Clear Your History
 
-Want to wipe everything you've copied? Open **Preferences → Clipboard History** and click **Clear Clipboard History…** to remove all saved items at once.
+Want to wipe everything you've copied? Open **Preferences → General**, then click **Clear Clipboard History…** in the Clipboard History section to remove all saved items at once.
 
 ---
 <!-- page-break -->
@@ -85,6 +84,5 @@ Keep clipboard contents from password managers and other sensitive apps out of y
 |--------|----------|--------------|
 | Open clipboard history | **⇧⌘V** | Shift-Command-V |
 | Open snippets | **⇧⌘S** | Shift-Command-S |
-| Open Preferences | **⌘,** | Command-Comma |
 
 Ran into a problem or have an idea? Open **Preferences → Help** to report a bug, request a feature, or export diagnostics.
