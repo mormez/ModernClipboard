@@ -40,6 +40,8 @@ private struct PreferencesView: View {
     @State private var selectedExcludedID: String? = nil   // used for row highlight only
     @State private var selectedTab: Tab = .general
     @State private var showClearHistoryConfirm = false
+    @State private var showAccessibilityHelp = false
+    @State private var accessibilityHelpHoverWork: DispatchWorkItem?
 
     // Accessibility trust is re-checked live: AXIsProcessTrustedWithOptions reflects
     // the current process, but reading it once when the window draws leaves the label
@@ -90,9 +92,28 @@ private struct PreferencesView: View {
                     Text(accessibilityTrusted ? "Accessibility granted" : "Accessibility not granted")
                         .foregroundStyle(accessibilityTrusted ? Color.primary : Color.orange)
                     if !accessibilityTrusted {
-                        Image(systemName: "questionmark.circle")
-                            .foregroundStyle(.secondary)
-                            .help("Modern Clipboard needs Accessibility access to paste items for you. macOS requires you to turn this on yourself — it can't be enabled automatically. Click \"Open Accessibility Settings,\" then switch on Modern Clipboard in the list.")
+                        Button {
+                            accessibilityHelpHoverWork?.cancel()
+                            showAccessibilityHelp.toggle()
+                        } label: {
+                            Image(systemName: "questionmark.circle")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .onHover { hovering in
+                            accessibilityHelpHoverWork?.cancel()
+                            guard hovering else { return }
+                            // Brief delay so merely passing over the icon doesn't open it.
+                            let work = DispatchWorkItem { showAccessibilityHelp = true }
+                            accessibilityHelpHoverWork = work
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: work)
+                        }
+                        .popover(isPresented: $showAccessibilityHelp, arrowEdge: .bottom) {
+                            Text("Modern Clipboard needs Accessibility access to paste items for you. macOS requires you to turn this on yourself — it can't be enabled automatically. Click \"Open Accessibility Settings,\" then switch on Modern Clipboard in the list.")
+                                .font(.callout)
+                                .frame(width: 300, alignment: .leading)
+                                .padding(12)
+                        }
                     }
                     Spacer()
                     Button("Open Accessibility Settings") {
