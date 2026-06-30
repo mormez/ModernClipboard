@@ -2,8 +2,6 @@
 
 **Version 1.1**
 
-Get up and running in under 5 minutes.
-
 ---
 
 ## Step 1 — The Menu Bar Icon
