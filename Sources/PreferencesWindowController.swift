@@ -500,7 +500,7 @@ private struct PreferencesView: View {
                 DocDownloadButton(
                     label: "Quick Start Guide",
                     icon: "arrow.down.doc",
-                    resource: "Modern Clipboard Quick Start v1.0.1",
+                    resource: "Modern Clipboard Quick Start v1.1",
                     ext: "pdf"
                 )
             }
