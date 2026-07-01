@@ -6,7 +6,7 @@ import UniformTypeIdentifiers
 final class PreferencesWindowController: NSWindowController {
     static let shared: PreferencesWindowController = {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 580, height: 550),
+            contentRect: NSRect(x: 0, y: 0, width: 540, height: 550),
             styleMask: [.titled, .closable, .miniaturizable],
             backing: .buffered,
             defer: false
@@ -64,7 +64,7 @@ private struct PreferencesView: View {
             helpTab.tabItem { Label("Help", systemImage: "questionmark.circle") }.tag(Tab.help)
             aboutTab.tabItem { Label("About", systemImage: "info.circle") }.tag(Tab.about)
         }
-        .frame(width: 580, height: 550)
+        .frame(width: 540, height: 550)
         .onReceive(NotificationCenter.default.publisher(for: .openHelpTab)) { _ in
             selectedTab = .help
         }
@@ -81,6 +81,22 @@ private struct PreferencesView: View {
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
             accessibilityTrusted = AXIsProcessTrustedWithOptions(nil)
         }
+    }
+
+    /// Small circular-arrow reset control shown at the left of a picker.
+    /// When the value already equals its default the button is invisible but
+    /// still occupies its slot, so the dropdown never shifts horizontally.
+    @ViewBuilder
+    private func resetButton(isDefault: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: "arrow.counterclockwise")
+                .font(.system(size: 11, weight: .semibold))
+        }
+        .buttonStyle(.borderless)
+        .help("Restore default")
+        .opacity(isDefault ? 0 : 1)
+        .disabled(isDefault)
+        .frame(width: 16)
     }
 
     private var generalTab: some View {
@@ -125,7 +141,7 @@ private struct PreferencesView: View {
             }
 
             Section("Clipboard History") {
-                Toggle("Open the first folder when the popup appears", isOn: $prefs.openFirstFolderOnShow)
+                Toggle("Auto-open first folder", isOn: $prefs.openFirstFolderOnShow)
 
                 Picker("Menu style:", selection: $prefs.historyMenuStyle) {
                     ForEach(HistoryMenuStyle.allCases, id: \.self) { style in
@@ -133,7 +149,6 @@ private struct PreferencesView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                .frame(maxWidth: 320)
 
                 Picker("Sort history order by:", selection: $prefs.historySortOrder) {
                     ForEach(HistorySortOrder.allCases, id: \.self) { order in
@@ -141,45 +156,47 @@ private struct PreferencesView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                .frame(maxWidth: 320)
 
                 HStack {
+                    Text("Maximum items:")
+                    Spacer()
+                    resetButton(isDefault: prefs.maxHistoryItems == 20) { prefs.maxHistoryItems = 20 }
                     Picker("Maximum items:", selection: $prefs.maxHistoryItems) {
                         ForEach(historyOptions, id: \.self) { count in
                             Text("\(count)").tag(count)
                         }
                     }
+                    .labelsHidden()
                     .pickerStyle(.menu)
-                    .frame(maxWidth: 200)
-                    Button("Restore Default") { prefs.maxHistoryItems = 20 }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
+                    .fixedSize()
                 }
 
                 HStack {
+                    Text("Items popup width:")
+                    Spacer()
+                    resetButton(isDefault: prefs.itemsPanelWidth == 400) { prefs.itemsPanelWidth = 400 }
                     Picker("Items popup width:", selection: $prefs.itemsPanelWidth) {
                         ForEach(widthOptions, id: \.self) { w in
                             Text("\(w) px").tag(w)
                         }
                     }
+                    .labelsHidden()
                     .pickerStyle(.menu)
-                    .frame(maxWidth: 200)
-                    Button("Restore Default") { prefs.itemsPanelWidth = 400 }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
+                    .fixedSize()
                 }
 
                 HStack {
+                    Text("Preview lines:")
+                    Spacer()
+                    resetButton(isDefault: prefs.previewLines == 2) { prefs.previewLines = 2 }
                     Picker("Preview lines:", selection: $prefs.previewLines) {
                         ForEach(lineOptions, id: \.self) { n in
                             Text(n == 1 ? "1 line" : "\(n) lines").tag(n)
                         }
                     }
+                    .labelsHidden()
                     .pickerStyle(.menu)
-                    .frame(maxWidth: 200)
-                    Button("Restore Default") { prefs.previewLines = 2 }
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
+                    .fixedSize()
                 }
 
                 Button("Clear Clipboard History…") { showClearHistoryConfirm = true }
@@ -218,7 +235,6 @@ private struct PreferencesView: View {
                     }
                 }
                 .pickerStyle(.menu)
-                .frame(maxWidth: 320)
             }
         }
         .formStyle(.grouped)
@@ -621,7 +637,7 @@ private struct DocDownloadButton: View {
             }
         }
         .buttonStyle(.bordered)
-        .controlSize(.small)
+        .controlSize(.regular)
         .disabled(feedback != .idle)
     }
 
