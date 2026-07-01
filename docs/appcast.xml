@@ -3,14 +3,14 @@
     <channel>
         <title>Modern Clipboard</title>
         <item>
-            <title>1.1.0</title>
-            <pubDate>Tue, 30 Jun 2026 07:39:50 -0400</pubDate>
+            <title>1.1.1</title>
+            <pubDate>Tue, 30 Jun 2026 23:47:48 -0400</pubDate>
             <link>https://github.com/mormez/ModernClipboard</link>
-            <sparkle:version>3</sparkle:version>
-            <sparkle:shortVersionString>1.1.0</sparkle:shortVersionString>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.1.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/mormez/ModernClipboard/releases/download/v1.1.0/ModernClipboard.dmg" length="1622570" type="application/octet-stream" sparkle:edSignature="3KSBEPVtasPaGSygYUH0dD3GMS9VU2X+DrogZtawKC7yvGukfEDpps7+5YHXIFGP/zrq6sJaOS4TAscspJUPAA=="/>
+            <enclosure url="https://github.com/mormez/ModernClipboard/releases/download/v1.1.1/ModernClipboard.dmg" length="1627600" type="application/octet-stream" sparkle:edSignature="DhEEBMvNPfD8BSnloEvXbrWfKMYNbUzXMa0LMkLutA5X2QfJodfnMCEqxBYpHnFqcnXpMJn45VjA26vwWU+6Cg=="/>
         </item>
     </channel>
 </rss>
