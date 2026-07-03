@@ -121,23 +121,23 @@ while (i < lines.length) {
 const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title>
 <style>
-  @page { size: Letter; margin: 0.7in 0.8in; }
-  body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1a1a1a; font-size: 13px; line-height: 1.48; }
-  h1.doc-title { text-align: center; font-size: 23px; margin-top: 0; margin-bottom: 3px; }
-  p.doc-subtitle { text-align: center; font-style: italic; color: #666; margin-top: 0; margin-bottom: 18px; }
-  h1 { font-size: 18.5px; margin-top: 18px; margin-bottom: 9px; border-bottom: 2px solid ${BRAND_HEADER_BG}; padding-bottom: 4px; }
-  h2 { font-size: 16px; margin-top: 16px; margin-bottom: 7px; color: ${BRAND_HEADER_TEXT}; }
-  h3, h4 { font-size: 14px; margin-top: 13px; margin-bottom: 4px; }
-  p { margin: 7px 0; }
-  table { width: 100%; border-collapse: collapse; margin: 9px 0; }
-  th, td { border: 1px solid #ccc; padding: 5px 8px; text-align: left; font-size: 12.5px; }
+  @page { size: Letter; margin: 0.45in 0.8in 0.7in; }
+  body { font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1a1a1a; font-size: 13px; line-height: 1.42; }
+  h1.doc-title { text-align: center; font-size: 22px; margin-top: 0; margin-bottom: 2px; }
+  p.doc-subtitle { text-align: center; font-style: italic; color: #666; margin-top: 0; margin-bottom: 12px; }
+  h1 { font-size: 18.5px; margin-top: 13px; margin-bottom: 7px; border-bottom: 2px solid ${BRAND_HEADER_BG}; padding-bottom: 4px; }
+  h2 { font-size: 16px; margin-top: 12px; margin-bottom: 6px; color: ${BRAND_HEADER_TEXT}; }
+  h3, h4 { font-size: 14px; margin-top: 10px; margin-bottom: 3px; }
+  p { margin: 5px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 7px 0; }
+  th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; font-size: 12.5px; }
   th { background: ${BRAND_HEADER_BG}; color: ${BRAND_HEADER_TEXT}; font-weight: 600; }
   code { font-family: Menlo, monospace; color: #AD1457; background: #f5f5f5; padding: 1px 4px; border-radius: 3px; }
   pre { font-family: Menlo, monospace; font-size: 11.5px; background: #f5f5f5; padding: 10px; border-radius: 4px; white-space: pre; }
-  blockquote { border-left: 3px solid #999; margin: 7px 0; padding: 4px 14px; color: #444; font-style: italic; }
+  blockquote { border-left: 3px solid #999; margin: 6px 0; padding: 3px 14px; color: #444; font-style: italic; }
   a { color: #4640A6; }
-  ul, ol { margin: 5px 0; padding-left: 24px; }
-  li { margin: 2px 0; }
+  ul, ol { margin: 4px 0; padding-left: 24px; }
+  li { margin: 1px 0; }
   .page-break { page-break-before: always; break-before: page; }
 </style>
 </head><body>

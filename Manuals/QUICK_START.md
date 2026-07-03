@@ -1,6 +1,6 @@
 # Modern Clipboard — Quick Start Guide
 
-**Version 1.1**
+**Version 1.2**
 
 ---
 
@@ -35,6 +35,7 @@ Press **⇧⌘V** (Shift-Command-V) from anywhere to open the history popup.
 | Key | What it does |
 |-----|-------------|
 | ↓ / ↑ | Move between items |
+| → / ← | Open a folder · go back |
 | ⏎ (Return) | Paste the selected item |
 | 1 – 9 | Instantly paste item 1–9 |
 | Esc (Escape) | Close without pasting |
@@ -43,16 +44,14 @@ The popup closes and pastes into whatever app you were using.
 
 > **Tip:** Copied formatting (bold, links, colors) is always preserved and pasted back by default. Want it to match the destination's existing style instead? Hold **⌥ Option** (configurable) while pasting from the popup — this pastes plain text that takes on the formatting already in place where you're pasting.
 
----
-
-## Step 5 — Clear Your History
+### Step 4.5 — Clear Your History
 
 Want to wipe everything you've copied? Open **Preferences → General**, then click **Clear Clipboard History…** in the Clipboard History section to remove all saved items at once.
 
 ---
 <!-- page-break -->
 
-## Step 6 — Create a Snippet
+## Step 5 — Create a Snippet
 
 Snippets are text blocks you save once and reuse forever — great for signatures, templates, or common replies.
 
@@ -63,6 +62,25 @@ Snippets are text blocks you save once and reuse forever — great for signature
 5. Enter a title and your text, then click **Save**.
 
 Press **⇧⌘S** (Shift-Command-S) anywhere to open your snippets and paste one.
+
+---
+
+## Step 6 — Quick Snippets (Paste with One Key)
+
+At the top of your snippets you'll find a special **⚡ Quick Snippets** folder. It holds up to **10** snippets, each mapped to a number key so you can paste it the instant the popup opens — no arrow keys, no clicking.
+
+When you press **⇧⌘S**, the Quick Snippets folder opens automatically. Just press the number next to a snippet to paste it:
+
+| Key | Pastes |
+|-----|--------|
+| 1 – 9 | Quick Snippet in slots 1 through 9 |
+| 0 | Quick Snippet in the 10th slot |
+| ⏎ (Return) | The selected snippet |
+| Esc (Escape) | Close without pasting |
+
+To set them up, open **Edit Snippets…** and select the **⚡ Quick Snippets** folder. It comes pre-filled with a few examples — replace them with your own most-used text. Add up to 10; the folder can't be deleted, and slot **10** is always the **0** key.
+
+> **Tip:** Prefer that the Quick Snippets folder not open automatically? Turn off **Auto-open Quick Snippets folder** in **Preferences → General** (Snippets section). Your other folders are always one arrow-key away.
 
 ---
 

@@ -202,6 +202,9 @@ private struct PreferencesView: View {
                 Button("Clear Clipboard History…") { showClearHistoryConfirm = true }
                     .buttonStyle(.bordered)
             }
+            Section("Snippets") {
+                Toggle("Auto-open Quick Snippets folder", isOn: $prefs.autoOpenQuickSnippets)
+            }
             Section("Startup") {
                 Toggle("Launch Modern Clipboard at login", isOn: $prefs.launchAtLogin)
             }
@@ -516,7 +519,7 @@ private struct PreferencesView: View {
                 DocDownloadButton(
                     label: "Quick Start Guide",
                     icon: "arrow.down.doc",
-                    resource: "Modern Clipboard Quick Start v1.1",
+                    resource: "Modern Clipboard Quick Start v1.2",
                     ext: "pdf"
                 )
             }

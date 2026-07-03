@@ -61,9 +61,14 @@ private struct SnippetsEditorView: View {
 
     // MARK: - Folder column (list + bottom action bar)
 
+    private var selectedFolderIsQuickSnippets: Bool {
+        guard let id = selectedFolderID else { return false }
+        return manager.folders.first { $0.id == id }?.isQuickSnippets ?? false
+    }
+
     private var folderColumn: some View {
         List(foldersBinding, editActions: .move, selection: $selectedFolderID) { $folder in
-            Label(folder.name, systemImage: "folder")
+            Label(folder.name, systemImage: folder.isQuickSnippets ? "bolt.fill" : "folder")
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 0) {
@@ -80,8 +85,8 @@ private struct SnippetsEditorView: View {
                         Image(systemName: "minus").frame(width: 28, height: 22)
                     }
                     .buttonStyle(.plain)
-                    .disabled(selectedFolderID == nil)
-                    .help("Delete Folder")
+                    .disabled(selectedFolderID == nil || selectedFolderIsQuickSnippets)
+                    .help(selectedFolderIsQuickSnippets ? "Quick Snippets can't be deleted" : "Delete Folder")
 
                     Spacer()
 
@@ -103,7 +108,7 @@ private struct SnippetsEditorView: View {
     private var foldersBinding: Binding<[SnippetFolder]> {
         Binding(
             get: { manager.folders },
-            set: { manager.folders = $0; manager.persist() }
+            set: { manager.setFolders($0) }
         )
     }
 
@@ -187,12 +192,17 @@ private struct SnippetList: View {
         return manager.folders[folderIndex]
     }
 
+    private var isAtCapacity: Bool {
+        guard let folder, folder.isQuickSnippets else { return false }
+        return folder.snippets.count >= SnippetManager.quickSnippetsCapacity
+    }
+
     var body: some View {
         if let folder {
             VStack(spacing: 0) {
                 // Header bar with + / − clearly above the list
                 HStack(spacing: 4) {
-                    Text("Snippets")
+                    Text(folder.isQuickSnippets ? "Snippets  (\(folder.snippets.count)/\(SnippetManager.quickSnippetsCapacity))" : "Snippets")
                         .font(.system(size: 11, weight: .semibold))
                         .foregroundStyle(.secondary)
                     Spacer()
@@ -200,7 +210,8 @@ private struct SnippetList: View {
                         Image(systemName: "plus")
                     }
                     .buttonStyle(.borderless)
-                    .help("New Snippet")
+                    .disabled(isAtCapacity)
+                    .help(isAtCapacity ? "Quick Snippets is full (10 slots)" : "New Snippet")
 
                     Button(action: deleteSelectedSnippet) {
                         Image(systemName: "minus")

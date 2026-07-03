@@ -3,12 +3,18 @@ import Foundation
 final class SnippetManager: ObservableObject {
     static let shared = SnippetManager()
 
+    static let quickSnippetsCapacity = 10
+
     @Published var folders: [SnippetFolder] = []
     private let storageKey = "com.modernclipboard.snippets"
 
     private init() {
         load()
-        if folders.isEmpty { seedSampleData() }
+        migrateQuickSnippetsFolder()
+    }
+
+    var quickSnippetsFolderIndex: Int? {
+        folders.firstIndex { $0.isQuickSnippets }
     }
 
     // MARK: - Folder operations
@@ -25,20 +31,40 @@ final class SnippetManager: ObservableObject {
     }
 
     func removeFolder(at index: Int) {
-        guard index < folders.count else { return }
+        guard index < folders.count, !folders[index].isQuickSnippets else { return }
         folders.remove(at: index)
         persist()
     }
 
     func moveFolder(from source: IndexSet, to destination: Int) {
         folders.move(fromOffsets: source, toOffset: destination)
+        pinQuickSnippetsFirst()
         persist()
+    }
+
+    /// Used by the folders list's drag-to-reorder binding, which replaces the
+    /// whole array directly rather than going through `moveFolder`.
+    func setFolders(_ newFolders: [SnippetFolder]) {
+        folders = newFolders
+        pinQuickSnippetsFirst()
+        persist()
+    }
+
+    private func pinQuickSnippetsFirst() {
+        guard let idx = quickSnippetsFolderIndex, idx != 0 else { return }
+        let folder = folders.remove(at: idx)
+        folders.insert(folder, at: 0)
     }
 
     // MARK: - Snippet operations
 
     func addSnippet(_ snippet: Snippet, to folderIndex: Int) {
         guard folderIndex < folders.count else { return }
+        if folders[folderIndex].isQuickSnippets,
+           folders[folderIndex].snippets.count >= Self.quickSnippetsCapacity {
+            AppLogger.shared.log("Quick Snippets folder is full (\(Self.quickSnippetsCapacity) slots) — snippet not added")
+            return
+        }
         folders[folderIndex].snippets.append(snippet)
         persist()
     }
@@ -83,8 +109,19 @@ final class SnippetManager: ObservableObject {
         folders = loaded
     }
 
-    private func seedSampleData() {
-        folders = [SnippetFolder(name: "My Snippets")]
-        persist()
+    /// Ensures the Quick Snippets folder exists and sits first, for both fresh
+    /// installs and users upgrading from a version predating this feature.
+    private func migrateQuickSnippetsFolder() {
+        if folders.isEmpty {
+            folders = [SnippetFolder.makeQuickSnippets(), SnippetFolder(name: "My Snippets")]
+            persist()
+            return
+        }
+        if quickSnippetsFolderIndex == nil {
+            folders.insert(SnippetFolder.makeQuickSnippets(), at: 0)
+            persist()
+        } else {
+            pinQuickSnippetsFirst()
+        }
     }
 }

@@ -125,6 +125,11 @@ final class Preferences: ObservableObject {
     @Published var openFirstFolderOnShow: Bool {
         didSet { set(openFirstFolderOnShow, for: .openFirstFolderOnShow) }
     }
+    /// When the snippets popup opens, automatically expand the Quick Snippets
+    /// folder so its 10 slots are immediately visible and number-key pasteable. Default on.
+    @Published var autoOpenQuickSnippets: Bool {
+        didSet { set(autoOpenQuickSnippets, for: .autoOpenQuickSnippets) }
+    }
 
     private init() {
         maxHistoryItems  = ud.object(forKey: Key.maxHistoryItems.rawValue) as? Int ?? 20
@@ -140,6 +145,7 @@ final class Preferences: ObservableObject {
         historySortOrder = HistorySortOrder(rawValue: ud.integer(forKey: Key.historySortOrder.rawValue)) ?? .dateCreated
         matchStyleModifier = MatchStyleModifier(rawValue: ud.integer(forKey: Key.matchStyleModifier.rawValue)) ?? .option
         openFirstFolderOnShow = ud.object(forKey: Key.openFirstFolderOnShow.rawValue) as? Bool ?? true
+        autoOpenQuickSnippets = ud.object(forKey: Key.autoOpenQuickSnippets.rawValue) as? Bool ?? true
 
         // Migrate from old boolean alwaysGroupInSubfolders if present
         if let old = ud.object(forKey: "alwaysGroupInSubfolders") as? Bool {
@@ -163,7 +169,7 @@ final class Preferences: ObservableObject {
         case maxHistoryItems, mainMenuKeyCode, mainMenuModifiers
         case excludedBundleIDs, launchAtLogin, historyMenuStyle, itemsPanelWidth, previewLines
         case snippetsMenuKeyCode, snippetsMenuModifiers, historySortOrder, matchStyleModifier
-        case openFirstFolderOnShow
+        case openFirstFolderOnShow, autoOpenQuickSnippets
     }
 
     private func set(_ value: Any, for key: Key) {

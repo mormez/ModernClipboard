@@ -47,7 +47,7 @@ SOURCES = [
 # resource files
 RESOURCES = [
     "Assets.xcassets",
-    "Modern Clipboard Quick Start v1.1.pdf",
+    "Modern Clipboard Quick Start v1.2.pdf",
 ]
 
 # map filename → (fileRef UUID, buildFile UUID)

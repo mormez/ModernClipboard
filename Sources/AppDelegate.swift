@@ -101,7 +101,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Presents a save panel (defaulting to ~/Downloads) and copies the bundled
     /// Quick Start PDF there — mirrors the Help-tab download button.
     private func saveQuickStartGuide() {
-        let resource = "Modern Clipboard Quick Start v1.1"
+        let resource = "Modern Clipboard Quick Start v1.2"
         guard let src = Bundle.main.url(forResource: resource, withExtension: "pdf") else {
             AppLogger.shared.log("Welcome: Quick Start PDF not found in bundle")
             return

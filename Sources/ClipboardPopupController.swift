@@ -638,7 +638,8 @@ struct FolderPanelView: View {
                         hoverEnabled: state.hoverEnabled,
                         onSelect: { onSelectSnippetFolder(si) },
                         onHover: { if $0 { state.selectedRowIndex = row } },
-                        indent: 14
+                        indent: 14,
+                        icon: folder.isQuickSnippets ? "bolt.fill" : "folder"
                     )
                 }
 
@@ -766,10 +767,11 @@ struct PopupFolderRow: View {
     let onSelect: () -> Void
     let onHover: (Bool) -> Void
     var indent: CGFloat = 0
+    var icon: String = "folder"
 
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: "folder").font(.system(size: 12)).foregroundStyle(.secondary)
+            Image(systemName: icon).font(.system(size: 12)).foregroundStyle(.secondary)
             Text(label).font(.system(size: 12))
             Spacer()
             Image(systemName: "chevron.right").font(.system(size: 9, weight: .semibold)).foregroundStyle(.tertiary)
@@ -848,6 +850,11 @@ final class SnippetsPopupController {
     private var mouseMoveMonitor: Any?
     private var resignObserver: NSObjectProtocol?
     private var previousApp: NSRunningApplication?
+    /// True while the showing item pane is the Quick Snippets folder we
+    /// auto-expanded on show(), with no user navigation since. Lets Esc dismiss
+    /// the whole popup (treating that list as the root) instead of collapsing
+    /// to the folder list.
+    private var quickSnippetsAutoOpened = false
 
     let popupState = SnippetsPopupState()
 
@@ -875,6 +882,7 @@ final class SnippetsPopupController {
         popupState.expandedFolderIndex = nil
         popupState.selectedItemIndex   = 0
         popupState.hoverEnabled        = false
+        quickSnippetsAutoOpened        = false
 
         buildPanel()
         sizePanel()
@@ -901,6 +909,13 @@ final class SnippetsPopupController {
 
         panel?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+
+        // Optionally auto-expand the Quick Snippets folder so its 10 slots
+        // are immediately visible and number-key pasteable.
+        if Preferences.shared.autoOpenQuickSnippets, let qi = SnippetManager.shared.quickSnippetsFolderIndex {
+            openFolder(qi)
+            quickSnippetsAutoOpened = true   // set after openFolder, which clears it
+        }
     }
 
     func hide() {
@@ -966,6 +981,7 @@ final class SnippetsPopupController {
 
     private func openFolder(_ fi: Int) {
         guard fi < folders.count else { return }
+        quickSnippetsAutoOpened        = false   // any open is treated as user navigation
         popupState.expandedFolderIndex = fi
         popupState.selectedItemIndex   = 0
         // folder panel view updates automatically via @Observable state
@@ -1007,6 +1023,7 @@ final class SnippetsPopupController {
     }
 
     private func closeFolder() {
+        quickSnippetsAutoOpened = false
         popupState.expandedFolderIndex = nil
         itemPanel?.orderOut(nil)
         // folder panel view updates automatically via @Observable state
@@ -1043,13 +1060,20 @@ final class SnippetsPopupController {
         case 126:
             popupState.selectedItemIndex = max(popupState.selectedItemIndex - 1, 0)
             return nil
-        case 123, 53: closeFolder(); return nil
+        case 123: closeFolder(); return nil
+        case 53:
+            // From the untouched auto-opened Quick Snippets folder, treat this
+            // list as the root and dismiss the whole popup; otherwise collapse
+            // one level.
+            if quickSnippetsAutoOpened { hide() } else { closeFolder() }
+            return nil
         case 36, 76:
             if popupState.selectedItemIndex < snippets.count { pasteSnippet(snippets[popupState.selectedItemIndex]) }
             return nil
         default:
-            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (1...9).contains(d), d-1 < snippets.count {
-                pasteSnippet(snippets[d-1]); return nil
+            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (0...9).contains(d) {
+                let i = d == 0 ? 9 : d - 1   // slot "0" pastes the 10th item
+                if i < snippets.count { pasteSnippet(snippets[i]); return nil }
             }
             return event
         }
@@ -1119,7 +1143,8 @@ struct SnippetsFolderPanelView: View {
                             hoverEnabled: state.hoverEnabled,
                             onSelect: { onSelectFolder(fi) },
                             onHover: { if $0 { onHoverFolder(fi) } },
-                            indent: 14
+                            indent: 14,
+                            icon: folder.isQuickSnippets ? "bolt.fill" : "folder"
                         )
                     }
                 }
@@ -1157,7 +1182,8 @@ struct SnippetsItemsPanelView: View {
             HStack(spacing: 6) {
                 Text(folder.name).font(.system(size: 12, weight: .semibold))
                 Spacer()
-                Text("⏎ paste  ←  back").font(.system(size: 10)).foregroundStyle(.tertiary)
+                Text(folder.isQuickSnippets ? "1-0 paste  ·  ⏎ paste  ←  back" : "⏎ paste  ←  back")
+                    .font(.system(size: 10)).foregroundStyle(.tertiary)
             }
             .padding(.horizontal, 12).padding(.vertical, 10)
 
@@ -1166,7 +1192,7 @@ struct SnippetsItemsPanelView: View {
             VStack(spacing: 0) {
                 ForEach(Array(folder.snippets.enumerated()), id: \.element.id) { i, snippet in
                     HStack(spacing: 8) {
-                        Text("\(i + 1)")
+                        Text(i < 10 ? (i == 9 ? "0" : "\(i + 1)") : "")
                             .font(.system(size: 10, weight: .medium, design: .monospaced))
                             .foregroundStyle(.tertiary).frame(width: 16, alignment: .trailing)
                         Image(systemName: "text.quote").font(.system(size: 11)).foregroundStyle(.secondary)
