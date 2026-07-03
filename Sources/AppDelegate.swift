@@ -99,7 +99,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private static func whatsNewMessage(for version: String) -> String? {
         switch version {
         case "1.2.0":
-            return "Quick Snippets lets you paste your 10 most-used snippets with a single number key — press ⇧⌘S, then 1–9."
+            return """
+            Quick Snippets lets you paste your 10 most-used snippets with a single number key.
+
+            Try it by pressing ⇧⌘S (Shift-Command-S), then 1–9.
+            """
         default:
             return nil
         }
@@ -133,15 +137,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.messageText = "What's New in Modern Clipboard \(version)"
         alert.informativeText = body
         if let icon = NSImage(named: "AppIcon") { alert.icon = icon }
-        alert.addButton(withTitle: "Show Me")
-        alert.addButton(withTitle: "Got It")
-
-        if alert.runModal() == .alertFirstButtonReturn {
-            // Open the snippets popup so the Quick Snippets folder is right there.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                SnippetsPopupController.shared.show()
-            }
-        }
+        alert.addButton(withTitle: "Got it!")
+        // Single dismiss button — the copy tells them to try it with ⇧⌘S, so
+        // there's no action that could fall flat with no paste target.
+        alert.runModal()
     }
 
     private func showWelcomePopup() {
