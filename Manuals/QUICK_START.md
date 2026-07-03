@@ -37,7 +37,7 @@ Press **⇧⌘V** (Shift-Command-V) from anywhere to open the history popup.
 | ↓ / ↑ | Move between items |
 | → / ← | Open a folder · go back |
 | ⏎ (Return) | Paste the selected item |
-| 1 – 9 | Instantly paste item 1–9 |
+| 1 – 9, 0 | Instantly paste items 1–10 (0 = the 10th) |
 | Esc (Escape) | Close without pasting |
 
 The popup closes and pastes into whatever app you were using.
@@ -73,8 +73,7 @@ When you press **⇧⌘S**, the Quick Snippets folder opens automatically. Just 
 
 | Key | Pastes |
 |-----|--------|
-| 1 – 9 | Quick Snippet in slots 1 through 9 |
-| 0 | Quick Snippet in the 10th slot |
+| 1 – 9, 0 | Paste Quick Snippet 1–10 (0 = the 10th) |
 | ⏎ (Return) | The selected snippet |
 | Esc (Escape) | Close without pasting |
 

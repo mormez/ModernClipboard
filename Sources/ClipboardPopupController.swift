@@ -7,7 +7,6 @@ import Observation
 struct PopupFolder {
     let label: String
     let items: [ClipItem]
-    let startNumber: Int
 }
 
 enum ExpandedPane: Equatable {
@@ -167,7 +166,7 @@ final class ClipboardPopupController {
             stride(from: 0, to: src.count, by: ps).enumerated().map { pi, start in
                 let gi = Array(src[start ..< min(start + ps, src.count)])
                 return PopupFolder(label: "\(offset + start + 1) – \(offset + (pi + 1) * ps)",
-                                   items: gi, startNumber: offset + start + 1)
+                                   items: gi)
             }
         }
         switch style {
@@ -276,8 +275,8 @@ final class ClipboardPopupController {
                     panelWidth: self.itemColW,
                     previewLines: Preferences.shared.previewLines,
                     title: folder.label,
-                    rows: folder.items.enumerated().map { i, item in
-                        ItemRow(number: folder.startNumber + i, title: item.displayTitle,
+                    rows: folder.items.map { item in
+                        ItemRow(title: item.displayTitle,
                                 icon: item.listIconName,
                                 thumbnailImage: item.thumbnailImage)
                     },
@@ -307,8 +306,8 @@ final class ClipboardPopupController {
                     panelWidth: self.itemColW,
                     previewLines: Preferences.shared.previewLines,
                     title: folder.name,
-                    rows: folder.snippets.enumerated().map { i, snippet in
-                        ItemRow(number: i + 1, title: snippet.title,
+                    rows: folder.snippets.map { snippet in
+                        ItemRow(title: snippet.title,
                                 icon: "text.quote", thumbnailImage: nil)
                     },
                     onSelectRow: { [weak self] i in
@@ -464,8 +463,11 @@ final class ClipboardPopupController {
             return nil
         case 53: hide(); return nil
         default:
-            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (1...9).contains(d), d-1 < n {
-                pasteItem(currentFlatItems[d-1], matchStyle: event.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag)); return nil
+            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (0...9).contains(d) {
+                let i = d == 0 ? 9 : d - 1   // key "0" pastes the 10th item
+                if i < n {
+                    pasteItem(currentFlatItems[i], matchStyle: event.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag)); return nil
+                }
             }
             return event
         }
@@ -491,8 +493,8 @@ final class ClipboardPopupController {
             return nil
         case 53: hide(); return nil
         default:
-            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (1...9).contains(d) {
-                let fi = d - 1
+            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (0...9).contains(d) {
+                let fi = d == 0 ? 9 : d - 1   // key "0" pastes the 10th flat item
                 if fi < flatCount {
                     pasteItem(currentFlatItems[fi], matchStyle: event.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag)); return nil
                 }
@@ -531,8 +533,9 @@ final class ClipboardPopupController {
             }
             return nil
         default:
-            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (1...9).contains(d), d-1 < itemCount {
-                let i = d - 1
+            if let ch = event.charactersIgnoringModifiers, let d = Int(ch), (0...9).contains(d) {
+                let i = d == 0 ? 9 : d - 1   // key "0" pastes the 10th item
+                guard i < itemCount else { return event }
                 switch state.expandedPane {
                 case .clipboard(let fi): pasteItem(currentFolders[fi].items[i], matchStyle: event.modifierFlags.contains(Preferences.shared.matchStyleModifier.eventFlag))
                 case .snippet(let si):   pasteSnippet(snippetFolders[si].snippets[i])
@@ -665,8 +668,15 @@ struct FolderPanelView: View {
 
 // MARK: - Items panel view (shared for clipboard items and snippets)
 
+/// The number-key hint shown next to an item and used to paste it: the first
+/// nine items map to 1–9, the tenth to 0, and anything beyond has no key.
+func slotKeyLabel(for index: Int) -> String {
+    if index < 9  { return "\(index + 1)" }
+    if index == 9 { return "0" }
+    return ""
+}
+
 struct ItemRow {
-    let number: Int
     let title: String
     let icon: String
     let thumbnailImage: NSImage?
@@ -695,6 +705,7 @@ struct ItemsPanelView: View {
             ForEach(Array(rows.enumerated()), id: \.offset) { i, row in
                 ItemsRowView(
                     row: row,
+                    keyLabel: slotKeyLabel(for: i),
                     previewLines: previewLines,
                     isSelected: state.selectedItemIndex == i,
                     hoverEnabled: state.hoverEnabled,
@@ -712,6 +723,7 @@ struct ItemsPanelView: View {
 
 struct ItemsRowView: View {
     let row: ItemRow
+    let keyLabel: String
     let previewLines: Int
     let isSelected: Bool
     let hoverEnabled: Bool
@@ -720,7 +732,7 @@ struct ItemsRowView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 8) {
-            Text("\(row.number)")
+            Text(keyLabel)
                 .font(.system(size: 10, weight: .medium, design: .monospaced))
                 .foregroundStyle(.tertiary)
                 .frame(width: 16, alignment: .trailing)
@@ -800,7 +812,7 @@ struct PopupItemRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("\(number)")
+            Text(slotKeyLabel(for: number - 1))
                 .font(.system(size: 10, weight: .medium, design: .monospaced))
                 .foregroundStyle(.tertiary)
                 .frame(width: 16, alignment: .trailing)
@@ -1192,7 +1204,7 @@ struct SnippetsItemsPanelView: View {
             VStack(spacing: 0) {
                 ForEach(Array(folder.snippets.enumerated()), id: \.element.id) { i, snippet in
                     HStack(spacing: 8) {
-                        Text(i < 10 ? (i == 9 ? "0" : "\(i + 1)") : "")
+                        Text(slotKeyLabel(for: i))
                             .font(.system(size: 10, weight: .medium, design: .monospaced))
                             .foregroundStyle(.tertiary).frame(width: 16, alignment: .trailing)
                         Image(systemName: "text.quote").font(.system(size: 11)).foregroundStyle(.secondary)
