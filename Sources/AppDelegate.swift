@@ -99,11 +99,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private static func whatsNewMessage(for version: String) -> String? {
         switch version {
         case "1.2.0":
-            return """
-            Quick Snippets — a folder pinned to the top of your snippets holds up to 10 entries, each mapped to a number key.
-
-            Press ⇧⌘S and it opens automatically, then press 1–9 (or 0 for the 10th) to paste instantly. Fill it with your most-used text under Edit Snippets.
-            """
+            return "Quick Snippets lets you paste your 10 most-used snippets with a single number key — press ⇧⌘S, then 1–9."
         default:
             return nil
         }
@@ -155,14 +151,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let alert = NSAlert()
         alert.messageText = "Welcome to Modern Clipboard"
         alert.informativeText = """
-        Modern Clipboard lives in your menu bar. Press ⇧⌘V to open your clipboard history, or ⇧⌘S for snippets.
+        Press ⇧⌘V to open your clipboard history, or ⇧⌘S for snippets.
 
-        Tip: Your Quick Snippets folder lets you paste your 10 most-used snippets with a single number key — press ⇧⌘S, then 1–9.
+        Tip: Quick Snippets lets you paste your 10 most-used snippets with a single number key — press ⇧⌘S, then 1–9.
 
         New here? The Quick Start Guide walks you through everything in a couple of minutes.
         """
         if let icon = NSImage(named: "AppIcon") { alert.icon = icon }
-        alert.addButton(withTitle: "Download Quick Start Guide")
+        alert.addButton(withTitle: "Download Quick Start")
         alert.addButton(withTitle: "Maybe Later")
 
         if alert.runModal() == .alertFirstButtonReturn {
