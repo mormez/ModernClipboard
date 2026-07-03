@@ -19,10 +19,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             AppLogger.shared.log("UNCAUGHT EXCEPTION: \(exception.name.rawValue) — \(exception.reason ?? "no reason"); stack: \(exception.callStackSymbols.joined(separator: " | "))")
         }
 
-        // Decide whether to show the first-install welcome BEFORE Preferences.shared
+        // Decide which launch popup (if any) to show BEFORE Preferences.shared
         // initializes — Preferences writes `launchAtLogin` on first launch, so the
         // "clean container" check has to read UserDefaults first.
-        let shouldShowWelcome = Self.evaluateFirstInstallWelcome()
+        // evaluateWhatsNew() always runs (it records the notified version even for
+        // fresh installs) but only returns true for an existing user who just
+        // upgraded to a version with release notes.
+        let shouldShowWelcome  = Self.evaluateFirstInstallWelcome()
+        let shouldShowWhatsNew = Self.evaluateWhatsNew() && !shouldShowWelcome
 
         _ = Preferences.shared
         _ = ClipboardHistory.shared
@@ -56,6 +60,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             DispatchQueue.main.async { [weak self] in
                 self?.showWelcomePopup()
             }
+        } else if shouldShowWhatsNew {
+            DispatchQueue.main.async { [weak self] in
+                self?.showWhatsNewPopup()
+            }
         }
     }
 
@@ -78,6 +86,68 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return !hasPriorFootprint
     }
 
+    // MARK: - "What's New" after an update
+
+    private static let lastNotifiedVersionKey = "lastNotifiedVersion"
+
+    private static var currentShortVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? ""
+    }
+
+    /// The "What's New" body for a version, or nil if that version has no notes.
+    /// Add a case per release that ships a user-facing feature worth surfacing.
+    private static func whatsNewMessage(for version: String) -> String? {
+        switch version {
+        case "1.2.0":
+            return """
+            Quick Snippets — a folder pinned to the top of your snippets holds up to 10 entries, each mapped to a number key.
+
+            Press ⇧⌘S and it opens automatically, then press 1–9 (or 0 for the 10th) to paste instantly. Fill it with your most-used text under Edit Snippets.
+            """
+        default:
+            return nil
+        }
+    }
+
+    /// Always records the current version as "notified" (so a fresh install never
+    /// sees What's New for the version it was installed at), but only returns true
+    /// for an existing user whose version changed to one that has release notes.
+    private static func evaluateWhatsNew() -> Bool {
+        let ud = UserDefaults.standard
+        let current = currentShortVersion
+        let last = ud.string(forKey: lastNotifiedVersionKey)
+        ud.set(current, forKey: lastNotifiedVersionKey)
+
+        // Read footprint BEFORE Preferences.shared writes it — a clean container
+        // is a fresh install, which the welcome popup handles instead.
+        let hasPriorFootprint = ud.object(forKey: "launchAtLogin") != nil
+            || ud.object(forKey: "maxHistoryItems") != nil
+
+        guard hasPriorFootprint, last != current else { return false }
+        return whatsNewMessage(for: current) != nil
+    }
+
+    private func showWhatsNewPopup() {
+        let version = Self.currentShortVersion
+        guard let body = Self.whatsNewMessage(for: version) else { return }
+        AppLogger.shared.log("Existing user upgraded to \(version) — showing What's New popup")
+        NSApp.activate(ignoringOtherApps: true)
+
+        let alert = NSAlert()
+        alert.messageText = "What's New in Modern Clipboard \(version)"
+        alert.informativeText = body
+        if let icon = NSImage(named: "AppIcon") { alert.icon = icon }
+        alert.addButton(withTitle: "Show Me")
+        alert.addButton(withTitle: "Got It")
+
+        if alert.runModal() == .alertFirstButtonReturn {
+            // Open the snippets popup so the Quick Snippets folder is right there.
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                SnippetsPopupController.shared.show()
+            }
+        }
+    }
+
     private func showWelcomePopup() {
         AppLogger.shared.log("First install — showing welcome popup")
         NSApp.activate(ignoringOtherApps: true)
@@ -86,6 +156,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.messageText = "Welcome to Modern Clipboard"
         alert.informativeText = """
         Modern Clipboard lives in your menu bar. Press ⇧⌘V to open your clipboard history, or ⇧⌘S for snippets.
+
+        Tip: Your Quick Snippets folder lets you paste your 10 most-used snippets with a single number key — press ⇧⌘S, then 1–9.
 
         New here? The Quick Start Guide walks you through everything in a couple of minutes.
         """

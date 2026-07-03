@@ -115,6 +115,18 @@ xcrun stapler staple "$DMG_PATH"
 xcrun stapler validate "$DMG_PATH"
 echo "✓ DMG built, notarized, and stapled: $DMG_PATH"
 
+# --- Embed release notes ("What's New" in the Sparkle update dialog) ------
+# generate_appcast picks up an HTML file whose basename matches the archive
+# (ModernClipboard.dmg -> ModernClipboard.html) and embeds it as the item's
+# <description>. Authored per-version in packaging/release-notes/<version>.html.
+NOTES="packaging/release-notes/$VERSION.html"
+if [ -f "$NOTES" ]; then
+  cp "$NOTES" "$RELEASE_DIR/ModernClipboard.html"
+  echo "✓ Embedded release notes from $NOTES"
+else
+  echo "⚠ No release notes at $NOTES — the appcast item will have no What's New body."
+fi
+
 # --- Regenerate the appcast (signs the dmg with the Sparkle key) ----------
 GEN=$(find build/ReleaseDerivedData -name "generate_appcast" -path "*sparkle*" | head -1)
 if [ -z "$GEN" ]; then
