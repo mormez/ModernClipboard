@@ -98,7 +98,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Add a case per release that ships a user-facing feature worth surfacing.
     private static func whatsNewMessage(for version: String) -> String? {
         switch version {
-        case "1.2.0":
+        case "1.2.0", "1.2.1":
             return """
             Quick Snippets lets you paste your 10 most-used snippets with a single number key.
 
