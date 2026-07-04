@@ -3,14 +3,36 @@
     <channel>
         <title>Modern Clipboard</title>
         <item>
-            <title>1.1.1</title>
-            <pubDate>Tue, 30 Jun 2026 23:47:48 -0400</pubDate>
+            <title>1.2.0</title>
+            <pubDate>Fri, 03 Jul 2026 19:22:01 -0400</pubDate>
             <link>https://github.com/mormez/ModernClipboard</link>
-            <sparkle:version>4</sparkle:version>
-            <sparkle:shortVersionString>1.1.1</sparkle:shortVersionString>
+            <sparkle:version>5</sparkle:version>
+            <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/mormez/ModernClipboard/releases/download/v1.1.1/ModernClipboard.dmg" length="1627600" type="application/octet-stream" sparkle:edSignature="DhEEBMvNPfD8BSnloEvXbrWfKMYNbUzXMa0LMkLutA5X2QfJodfnMCEqxBYpHnFqcnXpMJn45VjA26vwWU+6Cg=="/>
+            <description><![CDATA[<!-- Sparkle release notes for 1.2.0.
+     release.sh copies this to releases/v1.2.0/ModernClipboard.html so
+     generate_appcast embeds it as the update dialog's "What's New" body. -->
+<style>
+  body { font: 13px -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; color: #1a1a1a; }
+  h2 { font-size: 16px; margin: 0 0 8px; color: #4640A6; }
+  ul { margin: 6px 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  code { font-family: Menlo, monospace; background: #f2f2f7; padding: 1px 4px; border-radius: 3px; }
+</style>
+
+<h2>⚡ Quick Snippets</h2>
+<p>Version 1.2 adds <b>Quick Snippets</b> — a folder pinned to the top of your
+snippets that holds up to 10 entries, each mapped to a number key.</p>
+<ul>
+  <li>Press <code>⇧⌘S</code> and the Quick Snippets folder opens automatically.</li>
+  <li>Press <code>1</code>–<code>9</code> (or <code>0</code> for the 10th) to paste instantly — no arrow keys, no clicking.</li>
+  <li>Fill it with your most-used text under <b>Edit Snippets</b>. It starts with a few examples you can replace.</li>
+</ul>
+<p>Prefer it not to auto-open? Turn it off in
+<b>Preferences → General → Snippets</b>.</p>
+]]></description>
+            <enclosure url="https://github.com/mormez/ModernClipboard/releases/download/v1.2.0/ModernClipboard.dmg" length="1650947" type="application/octet-stream" sparkle:edSignature="i17J/UGIj1hBGzqHIDPRbk+YuU0bRwHUchzpl+I5VclGPqab4qzGeOHKrdTzTzw3I88pJi+CQ2VMX2aRhzLpDw=="/>
         </item>
     </channel>
 </rss>
